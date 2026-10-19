@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechLingo | Feedback</title>
+    <!-- Fonte Retro Gamer do Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <link rel="shortcut icon" href="img/TechLingo.ico" type="img/TechLingo.ico">
+    <style>
+        :root {
+            --sky-blue: #5c94fc;
+            --grass-green: #00a800;
+           --brick-red: #7d0cc8;
+            --coin-yellow: #c342ff;
+            --block-brown: #8c10e4;
+            --dark-bg: #000000;
+            --text-white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-white);
+            font-family: 'VT323', monospace;
+            font-size: 1.3rem;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* HEADER ARCADE */
+        header {
+            background-color: #111;
+            border-bottom: 4px solid var(--coin-yellow);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.9rem;
+            color: var(--coin-yellow);
+            text-decoration: none;
+            text-shadow: 2px 2px #000;
+        }
+
+        nav {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        nav a {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.6rem;
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        nav a:hover,
+        nav a.active {
+            color: var(--coin-yellow);
+        }
+
+        /* SELETOR DE NÍVEL NO TOPO */
+        .difficulty-selector {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #222;
+            border: 2px solid var(--coin-yellow);
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+        }
+
+        .difficulty-label {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.55rem;
+            color: var(--coin-yellow);
+        }
+
+        .diff-btn {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.5rem;
+            background: #444;
+            color: #fff;
+            border: 1px solid #fff;
+            padding: 0.3rem 0.5rem;
+            cursor: pointer;
+        }
+
+        .diff-btn.active {
+            background: var(--brick-red);
+            color: var(--coin-yellow);
+            border-color: var(--coin-yellow);
+        }
+
+        /* CONTAINER PRINCIPAL */
+        main {
+            flex: 1;
+            max-width: 700px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .page-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.2rem;
+            color: var(--coin-yellow);
+            text-shadow: 3px 3px var(--brick-red);
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #ccc;
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            line-height: 1.3;
+        }
+
+        /* CAIXA DO FORMULÁRIO ESTILO ARCADE */
+        .form-card {
+            background-color: #111;
+            border: 4px solid var(--coin-yellow);
+            box-shadow: 8px 8px 0px #000;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        label {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.65rem;
+            color: var(--coin-yellow);
+        }
+
+        input[type="text"],
+        input[type="email"],
+        select,
+        textarea {
+            background-color: #000;
+            border: 2px solid #fff;
+            color: #fff;
+            font-family: 'VT323', monospace;
+            font-size: 1.3rem;
+            padding: 0.6rem 0.8rem;
+            outline: none;
+            width: 100%;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--coin-yellow);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* BOTÃO DE SUBMIT RETRO */
+        .submit-btn {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8rem;
+            background-color: var(--grass-green);
+            color: #fff;
+            border: 3px solid #fff;
+            padding: 0.8rem 1.5rem;
+            cursor: pointer;
+            box-shadow: 4px 4px 0px #000;
+            width: 100%;
+            margin-top: 1rem;
+            transition: transform 0.1s, background-color 0.2s;
+        }
+
+        .submit-btn:hover {
+            background-color: var(--coin-yellow);
+            color: #000;
+            transform: translateY(-2px);
+        }
+
+        .submit-btn:active {
+            transform: translateY(2px);
+            box-shadow: 2px 2px 0px #000;
+        }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            border-top: 4px solid #222;
+            font-size: 1.1rem;
+            color: #777;
+            margin-top: 3rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <a href="index.html" class="logo">🎮 TechLingo</a>
+
+        <nav>
+            <a href="index.html" id="nav-start">INÍCIO</a>
+            <a href="exercicios.html" id="nav-w1">MUNDO 1</a>
+            <a href="materiais.html" id="nav-w2">MUNDO 2</a>
+            <a href="feedback.html" id="nav-bonus" class="active">BÔNUS</a>
+        </nav>
+
+        <!-- CONTROLE DE DIFICULDADE -->
+        <div class="difficulty-selector">
+            <span class="difficulty-label" id="lbl-diff">NÍVEL:</span>
+            <button class="diff-btn active" onclick="setDifficulty('easy')">FÁCIL</button>
+            <button class="diff-btn" onclick="setDifficulty('medium')">MÉDIO</button>
+            <button class="diff-btn" onclick="setDifficulty('hard')">DIFÍCIL</button>
+        </div>
+    </header>
+
+    <main>
+        <h1 class="page-title" id="page-title">FASE BÔNUS: FEEDBACK</h1>
+        <p class="subtitle" id="subtitle">Envie suas sugestões ou dúvidas sobre a plataforma para os desenvolvedores!
+        </p>
+
+        <div class="form-card">
+            <!-- COLOQUE SEU LINK DO FORMSPREE NO ACTION ABAIXO (ex: https://formspree.io/f/seu_id_aqui) -->
+            <form action="https://formspree.io/f/SEU_ID_AQUI" method="POST">
+
+                <div class="form-group">
+                    <label for="txtName" id="lbl-name">NOME COMPLETO:</label>
+                    <input type="text" id="txtName" name="name" required placeholder="Digite seu nome...">
+                </div>
+
+                <div class="form-group">
+                    <label for="txtEmail" id="lbl-email">SEU E-MAIL:</label>
+                    <input type="email" id="txtEmail" name="email" required placeholder="seuemail@exemplo.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="selSubject" id="lbl-subject">ASSUNTO:</label>
+                    <select id="selSubject" name="subject">
+                        <option value="sugestao" id="opt-sug">Sugestão de melhoria</option>
+                        <option value="duvida" id="opt-dov">Dúvida técnica / Conteúdo</option>
+                        <option value="bug" id="opt-bug">Reportar erro (Bug)</option>
+                        <option value="outro" id="opt-out">Outro assunto</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="txtMessage" id="lbl-message">SUA MENSAGEM:</label>
+                    <textarea id="txtMessage" name="message" required
+                        placeholder="Escreva aqui seu feedback..."></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn" id="btn-submit">🚀 ENVIAR RESPOSTA</button>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        <p id="footer-text">PROJETO DE ALUNOS DA UNINTER • 2026</p>
+    </footer>
+
+    <script>
+        // TRADUÇÕES DA INTERFACE
+        const translations = {
+            easy: {
+                navStart: "INÍCIO", navW1: "MUNDO 1", navW2: "MUNDO 2", navBonus: "BÔNUS",
+                lblDiff: "NÍVEL:",
+                pageTitle: "FASE BÔNUS: FEEDBACK",
+                subtitle: "Envie suas sugestões ou dúvidas sobre a plataforma para os desenvolvedores!",
+                lblName: "NOME COMPLETO:",
+                phName: "Digite seu nome...",
+                lblEmail: "SEU E-MAIL:",
+                phEmail: "seuemail@exemplo.com",
+                lblSubject: "ASSUNTO:",
+                optSug: "Sugestão de melhoria",
+                optDov: "Dúvida técnica / Conteúdo",
+                optBug: "Reportar erro (Bug)",
+                optOut: "Outro assunto",
+                lblMessage: "SUA MENSAGEM:",
+                phMessage: "Escreva aqui seu feedback...",
+                btnSubmit: "🚀 ENVIAR RESPOSTA",
+                footerText: "PROJETO DE ALUNOS DA UNINTER • 2026"
+            },
+            medium: {
+                navStart: "START", navW1: "WORLD 1", navW2: "WORLD 2", navBonus: "BONUS",
+                lblDiff: "LEVEL:",
+                pageTitle: "BONUS STAGE: FEEDBACK",
+                subtitle: "Send your suggestions or queries about the platform to the developers!",
+                lblName: "FULL NAME:",
+                phName: "Enter your name...",
+                lblEmail: "YOUR E-MAIL:",
+                phEmail: "youremail@example.com",
+                lblSubject: "SUBJECT:",
+                optSug: "Improvement suggestion",
+                optDov: "Technical question / Content",
+                optBug: "Report a bug",
+                optOut: "Other topic",
+                lblMessage: "YOUR MESSAGE:",
+                phMessage: "Write your feedback here...",
+                btnSubmit: "🚀 SEND MESSAGE",
+                footerText: "PROJETO DE ALUNOS DA UNINTER • 2026"
+            },
+            hard: {
+                navStart: "START", navW1: "WORLD 1", navW2: "WORLD 2", navBonus: "BONUS",
+                lblDiff: "LEVEL:",
+                pageTitle: "BONUS STAGE: FEEDBACK",
+                subtitle: "Submit feedback, report vulnerabilities, or query platform maintainers directly.",
+                lblName: "FULL NAME:",
+                phName: "Enter your full name...",
+                lblEmail: "YOUR E-MAIL:",
+                phEmail: "youremail@domain.com",
+                lblSubject: "SUBJECT:",
+                optSug: "Feature request",
+                optDov: "Technical query",
+                optBug: "Issue / Bug report",
+                optOut: "Miscellaneous",
+                lblMessage: "YOUR MESSAGE:",
+                phMessage: "Compose your message here...",
+                btnSubmit: "🚀 SUBMIT FEEDBACK",
+                footerText: "UNINTER STUDENTS PROJECT • 2026"
+            }
+        };
+
+        function setDifficulty(lang) {
+            const data = translations[lang];
+
+            document.querySelectorAll('.diff-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            document.getElementById('nav-start').innerText = data.navStart;
+            document.getElementById('nav-w1').innerText = data.navW1;
+            document.getElementById('nav-w2').innerText = data.navW2;
+            document.getElementById('nav-bonus').innerText = data.navBonus;
+            document.getElementById('lbl-diff').innerText = data.lblDiff;
+
+            document.getElementById('page-title').innerText = data.pageTitle;
+            document.getElementById('subtitle').innerText = data.subtitle;
+
+            document.getElementById('lbl-name').innerText = data.lblName;
+            document.getElementById('txtName').placeholder = data.phName;
+
+            document.getElementById('lbl-email').innerText = data.lblEmail;
+            document.getElementById('txtEmail').placeholder = data.phEmail;
+
+            document.getElementById('lbl-subject').innerText = data.lblSubject;
+            document.getElementById('opt-sug').innerText = data.optSug;
+            document.getElementById('opt-dov').innerText = data.optDov;
+            document.getElementById('opt-bug').innerText = data.optBug;
+            document.getElementById('opt-out').innerText = data.optOut;
+
+            document.getElementById('lbl-message').innerText = data.lblMessage;
+            document.getElementById('txtMessage').placeholder = data.phMessage;
+
+            document.getElementById('btn-submit').innerText = data.btnSubmit;
+            document.getElementById('footer-text').innerText = data.footerText;
+        }
+    </script>
+</body>
+
+</html>

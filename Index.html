@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechLingo</title>
+    <!-- Fonte Retro Gamer do Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <link rel="shortcut icon" href="img/TechLingo.ico" type="img/TechLingo.ico">
+    <style>
+        :root {
+            --sky-blue: #5c94fc;
+            --grass-green: #00a800;
+            --brick-red: #7d0cc8;
+            --coin-yellow: #c342ff;
+            --block-brown: #8c10e4;
+            --dark-bg: #000000;
+            --text-white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-white);
+            font-family: 'VT323', monospace;
+            font-size: 1.3rem;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* HEADER ARCADE */
+        header {
+            background-color: #111;
+            border-bottom: 4px solid var(--coin-yellow);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.9rem;
+            color: var(--coin-yellow);
+            text-decoration: none;
+            text-shadow: 2px 2px #000;
+        }
+
+        nav {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        nav a {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.6rem;
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        nav a:hover {
+            color: var(--coin-yellow);
+        }
+
+        /* SELETOR DE NÍVEL NO TOPO */
+        .difficulty-selector {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #222;
+            border: 2px solid var(--coin-yellow);
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+        }
+
+        .difficulty-label {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.55rem;
+            color: var(--coin-yellow);
+        }
+
+        .diff-btn {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.5rem;
+            background: #444;
+            color: #fff;
+            border: 1px solid #fff;
+            padding: 0.3rem 0.5rem;
+            cursor: pointer;
+        }
+
+        .diff-btn.active {
+            background: var(--brick-red);
+            color: var(--coin-yellow);
+            border-color: var(--coin-yellow);
+        }
+
+        /* HERO SECTION - RETRO TITLE */
+        main {
+            flex: 1;
+            max-width: 1000px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+            position: relative;
+        }
+
+        .hero-arcade {
+            background-color: var(--sky-blue);
+            border: 6px solid #fff;
+            box-shadow: 8px 8px 0px #000;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .hero-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.4rem;
+            color: #fff;
+            text-shadow: 4px 4px #000;
+            margin-bottom: 1rem;
+            line-height: 1.4;
+        }
+
+        .hero-subtitle {
+            font-size: 1.6rem;
+            color: #000;
+            background: var(--coin-yellow);
+            display: inline-block;
+            padding: 0.2rem 1rem;
+            border: 3px solid #000;
+            font-weight: bold;
+        }
+
+        /* TELA DE SELEÇÃO DE FASES */
+        .stage-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1rem;
+            color: var(--coin-yellow);
+            text-shadow: 2px 2px #c84c0c;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .grid-levels {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .card-level {
+            background-color: #222;
+            border: 4px solid #fff;
+            box-shadow: 6px 6px 0px var(--brick-red);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.1s;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .card-level:hover {
+            transform: scale(1.03);
+            border-color: var(--coin-yellow);
+            box-shadow: 6px 6px 0px var(--coin-yellow);
+        }
+
+        .world-badge {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.6rem;
+            background: var(--brick-red);
+            color: #fff;
+            padding: 0.3rem 0.5rem;
+            display: inline-block;
+            margin-bottom: 0.8rem;
+            width: fit-content;
+        }
+
+        .level-name {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.9rem;
+            color: #fff;
+            margin-bottom: 0.8rem;
+        }
+
+        .level-desc {
+            font-size: 1.2rem;
+            color: #ccc;
+            margin-bottom: 1.5rem;
+        }
+
+        /* BOTÃO BLOCO DE INTERROGAÇÃO [ ? ] */
+        .btn-block {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.7rem;
+            background-color: var(--block-brown);
+            color: var(--coin-yellow);
+            border: 3px solid #fff;
+            padding: 0.8rem;
+            text-align: center;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            box-shadow: 3px 3px 0px #000;
+        }
+
+        .card-level:hover .btn-block {
+            background-color: var(--coin-yellow);
+            color: #000;
+        }
+
+        /* ÁREA DA ANIMAÇÃO DO BONECO (CANVAS OVERLAY) */
+        #gameCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            border-top: 4px solid #222;
+            font-size: 1.1rem;
+            color: #777;
+            margin-top: 3rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- CANVAS PARA O PERSONAGEM PULANTE -->
+    <canvas id="gameCanvas"></canvas>
+
+    <header>
+        <a href="index.html" class="logo">🎮 TechLingo </a>
+
+        <nav>
+            <a href="index.html" id="nav-start">INÍCIO</a>
+            <a href="exercicios.html" id="nav-w1">MUNDO 1</a>
+            <a href="materiais.html" id="nav-w2">MUNDO 2</a>
+            <a href="feedback.html" id="nav-bonus">BÔNUS</a>
+        </nav>
+
+        <!-- CONTROLE DE DIFICULDADE DE IDIOMA -->
+        <div class="difficulty-selector">
+            <span class="difficulty-label" id="lbl-diff">NÍVEL:</span>
+            <button class="diff-btn active" onclick="setDifficulty('easy')">FÁCIL</button>
+            <button class="diff-btn" onclick="setDifficulty('medium')">MÉDIO</button>
+            <button class="diff-btn" onclick="setDifficulty('hard')">DIFÍCIL</button>
+        </div>
+    </header>
+
+    <main>
+        <!-- HERO ARCADE -->
+        <section class="hero-arcade">
+            <h1 class="hero-title" id="hero-title">POTENCIALIZE SEU INGLÊS NA TI!</h1>
+            <div class="hero-subtitle" id="hero-subtitle">PRESSIONE START PARA JOGAR</div>
+        </section>
+
+        <!-- SELEÇÃO DE FASES -->
+        <h2 class="stage-title" id="stage-title">SELECIONE SUA FASE (PODE MUDAR O NÍVEL NO TOPO)</h2>
+
+        <div class="grid-levels">
+
+            <!-- FASE 1 -->
+            <div class="card-level" onclick="triggerJumpAndNavigate(this, 'exercicios.html')">
+                <div>
+                    <span class="world-badge" id="badge-w1">MUNDO 1-1</span>
+                    <h3 class="level-name" id="title-w1">CENTRAL DE EXERCÍCIOS</h3>
+                    <p class="level-desc" id="desc-w1">Derrote os erros de pronúncia, resolva quizzes interativos e
+                        treine sua escuta de reuniões!</p>
+                </div>
+                <div class="btn-block">
+                    <span>[?]</span> <span id="btn-w1">JOGAR FASE</span>
+                </div>
+            </div>
+
+            <!-- FASE 2 -->
+            <div class="card-level" onclick="triggerJumpAndNavigate(this, 'materiais.html')">
+                <div>
+                    <span class="world-badge" id="badge-w2">MUNDO 1-2</span>
+                    <h3 class="level-name" id="title-w2">MATERIAIS & DICAS</h3>
+                    <p class="level-desc" id="desc-w2">Desbloqueie itens raros: dicionário de palavras parecidas,
+                        atalhos de pronúncia e curiosidades da tecnologia.</p>
+                </div>
+                <div class="btn-block">
+                    <span>[?]</span> <span id="btn-w2">ABRIR INVENTÁRIO</span>
+                </div>
+            </div>
+
+            <!-- FASE BONUS -->
+            <div class="card-level" onclick="triggerJumpAndNavigate(this, 'feedback.html')">
+                <div>
+                    <span class="world-badge" id="badge-bonus">FASE BÔNUS</span>
+                    <h3 class="level-name" id="title-bonus">ESPAÇO FEEDBACK</h3>
+                    <p class="level-desc" id="desc-bonus">Deixe sua mensagem para o criador, envie novas palavras e
+                        ajude a evoluir o jogo!</p>
+                </div>
+                <div class="btn-block">
+                    <span>[?]</span> <span id="btn-bonus">ENVIAR MENSAGEM</span>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer>
+        <p id="footer-text">PROJETO DE ALUNOS DA UNINTER • 2026</p>
+    </footer>
+
+    <!-- SCRIPT DA DIFICULDADE E ANIMAÇÃO -->
+    <script>
+        // DADOS DOS TEXTOS EM CADA DIFICULDADE
+        const translations = {
+            easy: {
+                navStart: "INÍCIO", navW1: "MUNDO 1", navW2: "MUNDO 2", navBonus: "BÔNUS",
+                lblDiff: "NÍVEL:",
+                heroTitle: "POTENCIALIZE SEU INGLÊS NA TI!",
+                heroSubtitle: "PRESSIONE START PARA JOGAR",
+                stageTitle: "SELECIONE SUA FASE (PODE MUDAR O NÍVEL NO TOPO)",
+                badgeW1: "MUNDO 1-1", titleW1: "CENTRAL DE EXERCÍCIOS", descW1: "Derrote os erros de pronúncia, resolva quizzes interativos e treine sua escuta de reuniões!", btnW1: "JOGAR FASE",
+                badgeW2: "MUNDO 1-2", titleW2: "MATERIAIS & DICAS", descW2: "Desbloqueie itens raros: dicionário de palavras parecidas, atalhos de pronúncia e curiosidades da tecnologia.", btnW2: "ABRIR INVENTÁRIO",
+                badgeBonus: "FASE BÔNUS", titleBonus: "ESPAÇO FEEDBACK", descBonus: "Deixe sua mensagem para o criador, envie novas palavras e ajude a evoluir o jogo!", btnBonus: "ENVIAR MENSAGEM",
+                footerText: "PROJETO DE ALUNOS DA UNINTER • 2026"
+            },
+            medium: {
+                navStart: "START", navW1: "WORLD 1", navW2: "WORLD 2", navBonus: "BONUS",
+                lblDiff: "LEVEL:",
+                heroTitle: "BOOST YOUR TECH ENGLISH!",
+                heroSubtitle: "PRESS START TO PLAY",
+                stageTitle: "SELECIONE SUA FASE (PODE MUDAR O NÍVEL NO TOPO)",
+                badgeW1: "WORLD 1-1", titleW1: "CENTRAL DE EXERCÍCIOS", descW1: "Derrote os erros de pronúncia, resolva quizzes interativos e treine sua escuta de reuniões!", btnW1: "PLAY STAGE",
+                badgeW2: "WORLD 1-2", titleW2: "MATERIAIS & DICAS", descW2: "Desbloqueie itens raros: dicionário de palavras parecidas, atalhos de pronúncia e curiosidades da tecnologia.", btnW2: "OPEN INVENTORY",
+                badgeBonus: "BONUS STAGE", titleBonus: "ESPAÇO FEEDBACK", descBonus: "Deixe sua mensagem para o criador, envie novas palavras e ajude a evoluir o jogo!", btnBonus: "SEND MESSAGE",
+                footerText: "PROJETO DE ALUNOS DA UNINTER • 2026"
+            },
+            hard: {
+                navStart: "START", navW1: "WORLD 1", navW2: "WORLD 2", navBonus: "BONUS",
+                lblDiff: "LEVEL:",
+                heroTitle: "BOOST YOUR TECH ENGLISH!",
+                heroSubtitle: "PRESS START TO PLAY",
+                stageTitle: "SELECT YOUR STAGE (YOU CAN CHANGE LEVEL ABOVE)",
+                badgeW1: "WORLD 1-1", titleW1: "EXERCISE CENTER", descW1: "Defeat pronunciation bugs, solve interactive quizzes and train your meeting listening skills!", btnW1: "PLAY STAGE",
+                badgeW2: "WORLD 1-2", titleW2: "MATERIALS & TIPS", descW2: "Unlock rare items: false friends dictionary, pronunciation shortcuts and tech trivia.", btnW2: "OPEN INVENTORY",
+                badgeBonus: "BONUS STAGE", titleBonus: "FEEDBACK HUB", descBonus: "Leave your message to the creator, submit new words and help improve the game!", btnBonus: "SEND MESSAGE",
+                footerText: "UNINTER STUDENTS PROJECT • 2026"
+            }
+        };
+
+        function setDifficulty(lang) {
+            const data = translations[lang];
+
+            document.querySelectorAll('.diff-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            document.getElementById('nav-start').innerText = data.navStart;
+            document.getElementById('nav-w1').innerText = data.navW1;
+            document.getElementById('nav-w2').innerText = data.navW2;
+            document.getElementById('nav-bonus').innerText = data.navBonus;
+            document.getElementById('lbl-diff').innerText = data.lblDiff;
+
+            document.getElementById('hero-title').innerText = data.heroTitle;
+            document.getElementById('hero-subtitle').innerText = data.heroSubtitle;
+            document.getElementById('stage-title').innerText = data.stageTitle;
+
+            document.getElementById('badge-w1').innerText = data.badgeW1;
+            document.getElementById('title-w1').innerText = data.titleW1;
+            document.getElementById('desc-w1').innerText = data.descW1;
+            document.getElementById('btn-w1').innerText = data.btnW1;
+
+            document.getElementById('badge-w2').innerText = data.badgeW2;
+            document.getElementById('title-w2').innerText = data.titleW2;
+            document.getElementById('desc-w2').innerText = data.descW2;
+            document.getElementById('btn-w2').innerText = data.btnW2;
+
+            document.getElementById('badge-bonus').innerText = data.badgeBonus;
+            document.getElementById('title-bonus').innerText = data.titleBonus;
+            document.getElementById('desc-bonus').innerText = data.descBonus;
+            document.getElementById('btn-bonus').innerText = data.btnBonus;
+
+            document.getElementById('footer-text').innerText = data.footerText;
+        }
+
+        /* ANIMAÇÃO DO PERSONAGEM */
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        let isAnimating = false;
+
+        // Limpa a tela se o usuário voltar na navegação
+        window.addEventListener('pageshow', function () {
+            isAnimating = false;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        });
+
+        function triggerJumpAndNavigate(cardElement, targetUrl) {
+            if (isAnimating) return;
+            isAnimating = true;
+
+            const rect = cardElement.getBoundingClientRect();
+            const targetX = rect.left + rect.width / 2;
+            const targetY = rect.top + 20;
+
+            let playerX = -50;
+            let jumpHeight = 0;
+            let progress = 0;
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                progress += 0.03;
+                playerX = -50 + (targetX + 50) * Math.min(progress, 1);
+
+                if (progress > 0.5 && progress <= 1) {
+                    let jumpProgress = (progress - 0.5) * 2;
+                    jumpHeight = Math.sin(jumpProgress * Math.PI) * 120;
+                }
+
+                let currentY = (window.innerHeight - 100) - ((window.innerHeight - 100 - targetY) * Math.min(progress, 1)) - jumpHeight;
+
+                ctx.fillStyle = "#e45c10";
+                ctx.fillRect(playerX - 15, currentY - 30, 30, 30);
+
+                ctx.fillStyle = "#fcb000";
+                ctx.fillRect(playerX - 10, currentY - 40, 20, 12);
+
+                ctx.fillStyle = "#000";
+                ctx.fillRect(playerX + 2, currentY - 36, 4, 4);
+
+                if (progress < 1.1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    ctx.fillStyle = "#fcb000";
+                    ctx.font = "20px 'Press Start 2P'";
+                    ctx.fillText("+100 PTS!", targetX - 40, targetY - 20);
+
+                    setTimeout(() => {
+                        window.location.href = targetUrl;
+                    }, 300);
+                }
+            }
+
+            animate();
+        }
+    </script>
+</body>
+
+</html>

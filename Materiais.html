@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechLingo | Materiais & Dicas</title>
+    <!-- Fonte Retro Gamer do Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <link rel="shortcut icon" href="img/TechLingo.ico" type="img/TechLingo.ico">
+    <style>
+        :root {
+            --sky-blue: #5c94fc;
+            --grass-green: #00a800;
+           --brick-red: #7d0cc8;
+            --coin-yellow: #c342ff;
+            --block-brown: #8c10e4;
+            --dark-bg: #000000;
+            --text-white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-white);
+            font-family: 'VT323', monospace;
+            font-size: 1.3rem;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* HEADER ARCADE */
+        header {
+            background-color: #111;
+            border-bottom: 4px solid var(--coin-yellow);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.9rem;
+            color: var(--coin-yellow);
+            text-decoration: none;
+            text-shadow: 2px 2px #000;
+        }
+
+        nav {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        nav a {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.6rem;
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        nav a:hover,
+        nav a.active {
+            color: var(--coin-yellow);
+        }
+
+        /* SELETOR DE NÍVEL NO TOPO */
+        .difficulty-selector {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #222;
+            border: 2px solid var(--coin-yellow);
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+        }
+
+        .difficulty-label {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.55rem;
+            color: var(--coin-yellow);
+        }
+
+        .diff-btn {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.5rem;
+            background: #444;
+            color: #fff;
+            border: 1px solid #fff;
+            padding: 0.3rem 0.5rem;
+            cursor: pointer;
+        }
+
+        .diff-btn.active {
+            background: var(--brick-red);
+            color: var(--coin-yellow);
+            border-color: var(--coin-yellow);
+        }
+
+        /* CONTAINER PRINCIPAL */
+        main {
+            flex: 1;
+            max-width: 1000px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .page-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.2rem;
+            color: var(--coin-yellow);
+            text-shadow: 3px 3px var(--brick-red);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .section-header {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8rem;
+            color: #fff;
+            background: var(--brick-red);
+            padding: 0.5rem 1rem;
+            border: 2px solid #fff;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            box-shadow: 4px 4px 0px #000;
+        }
+
+        /* CARDS DE CURIOSIDADES */
+        .trivia-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .trivia-card {
+            background-color: #222;
+            border: 3px solid var(--coin-yellow);
+            box-shadow: 5px 5px 0px #000;
+            padding: 1.2rem;
+            position: relative;
+        }
+
+        .trivia-tag {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.5rem;
+            color: #000;
+            background: var(--coin-yellow);
+            padding: 0.2rem 0.4rem;
+            display: inline-block;
+            margin-bottom: 0.6rem;
+        }
+
+        .trivia-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.75rem;
+            color: #fff;
+            margin-bottom: 0.6rem;
+        }
+
+        .trivia-desc {
+            font-size: 1.1rem;
+            color: #ccc;
+            line-height: 1.3;
+        }
+
+        /* BARRA DE PESQUISA E FILTROS */
+        .search-box {
+            background: #111;
+            border: 3px solid #fff;
+            padding: 1.2rem;
+            box-shadow: 6px 6px 0px var(--block-brown);
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 200px;
+            background: #000;
+            border: 2px solid var(--coin-yellow);
+            color: #fff;
+            font-family: 'VT323', monospace;
+            font-size: 1.3rem;
+            padding: 0.5rem 0.8rem;
+            outline: none;
+        }
+
+        .search-input::placeholder {
+            color: #777;
+        }
+
+        .filter-select {
+            background: #000;
+            border: 2px solid var(--coin-yellow);
+            color: #fff;
+            font-family: 'VT323', monospace;
+            font-size: 1.2rem;
+            padding: 0.5rem;
+            outline: none;
+            cursor: pointer;
+        }
+
+        /* LISTA DE TEXTOS */
+        .text-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .text-item {
+            background: #1b1b1b;
+            border: 3px solid #fff;
+            box-shadow: 4px 4px 0px #000;
+            padding: 1.2rem;
+            transition: transform 0.1s, border-color 0.2s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .text-item:hover {
+            border-color: var(--coin-yellow);
+            transform: translateX(4px);
+        }
+
+        .text-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .text-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8rem;
+            color: var(--coin-yellow);
+        }
+
+        .text-category {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.5rem;
+            background: var(--sky-blue);
+            color: #000;
+            padding: 0.2rem 0.5rem;
+            border: 1px solid #000;
+        }
+
+        .text-body {
+            font-size: 1.2rem;
+            color: #ddd;
+            line-height: 1.4;
+        }
+
+        .click-hint {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.55rem;
+            color: var(--grass-green);
+            margin-top: 0.8rem;
+            display: block;
+        }
+
+        /* PAGINAÇÃO RETRO */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1.5rem;
+            margin-top: 2.5rem;
+        }
+
+        .page-btn {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8rem;
+            background-color: var(--block-brown);
+            color: var(--coin-yellow);
+            border: 3px solid #fff;
+            padding: 0.6rem 1rem;
+            cursor: pointer;
+            box-shadow: 3px 3px 0px #000;
+            user-select: none;
+        }
+
+        .page-btn:hover:not(:disabled) {
+            background-color: var(--coin-yellow);
+            color: #000;
+        }
+
+        .page-btn:disabled {
+            background-color: #333;
+            color: #777;
+            border-color: #555;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .page-info {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.65rem;
+            color: #fff;
+        }
+
+        /* MODAL DE LEITURA COMPLETA */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 1rem;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-card {
+            background: #111;
+            border: 4px solid var(--coin-yellow);
+            box-shadow: 8px 8px 0px #000;
+            max-width: 700px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: 1.8rem;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--brick-red);
+            color: #fff;
+            border: 2px solid #fff;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.7rem;
+            padding: 0.3rem 0.6rem;
+            cursor: pointer;
+        }
+
+        .modal-close:hover {
+            background: var(--coin-yellow);
+            color: #000;
+        }
+
+        .modal-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.95rem;
+            color: var(--coin-yellow);
+            margin-bottom: 1rem;
+            padding-right: 2.5rem;
+            line-height: 1.4;
+        }
+
+        .modal-content-text {
+            font-size: 1.3rem;
+            color: #fff;
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+            white-space: pre-line;
+        }
+
+        .modal-vocab-box {
+            background: #222;
+            border: 2px dashed var(--sky-blue);
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .modal-vocab-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.65rem;
+            color: var(--sky-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            border-top: 4px solid #222;
+            font-size: 1.1rem;
+            color: #777;
+            margin-top: 3rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <a href="index.html" class="logo">🎮 TechLingo </a>
+
+        <nav>
+            <a href="index.html" id="nav-start">INÍCIO</a>
+            <a href="exercicios.html" id="nav-w1">MUNDO 1</a>
+            <a href="materiais.html" id="nav-w2" class="active">MUNDO 2</a>
+            <a href="feedback.html" id="nav-bonus">BÔNUS</a>
+        </nav>
+
+        <!-- CONTROLE DE DIFICULDADE -->
+        <div class="difficulty-selector">
+            <span class="difficulty-label" id="lbl-diff">NÍVEL:</span>
+            <button class="diff-btn active" onclick="setDifficulty('easy')">FÁCIL</button>
+            <button class="diff-btn" onclick="setDifficulty('medium')">MÉDIO</button>
+            <button class="diff-btn" onclick="setDifficulty('hard')">DIFÍCIL</button>
+        </div>
+    </header>
+
+    <main>
+        <h1 class="page-title" id="page-title">MUNDO 1-2: MATERIAIS & DICAS</h1>
+
+        <!-- CURIOSIDADES NO TOPO -->
+        <div class="section-header" id="sec-trivia">💡 CURIOSIDADES DA TI</div>
+        <div class="trivia-grid">
+            <div class="trivia-card">
+                <span class="trivia-tag">FACT #1</span>
+                <h3 class="trivia-title" id="t1-title">O PRIMEIRO BUG</h3>
+                <p class="trivia-desc" id="t1-desc">Em 1947, uma mariposa real ficou presa num relé do computador
+                    Harvard Mark II. Grace Hopper colou o inseto no diário de bordo!</p>
+            </div>
+            <div class="trivia-card">
+                <span class="trivia-tag">FACT #2</span>
+                <h3 class="trivia-title" id="t2-title">FOO & BAR</h3>
+                <p class="trivia-desc" id="t2-desc">Usados como nomes genéricos em código, 'Foobar' vem do termo militar
+                    'FUBAR' dos anos 1940.</p>
+            </div>
+            <div class="trivia-card">
+                <span class="trivia-tag">FACT #3</span>
+                <h3 class="trivia-title" id="t3-title">PYTHON & MONTY</h3>
+                <p class="trivia-desc" id="t3-desc">O nome da linguagem Python não veio da cobra, mas sim do grupo de
+                    comédia britânico 'Monty Python'!</p>
+            </div>
+        </div>
+
+        <!-- BUSCA E MATERIAIS COMPLEMENTARES -->
+        <div class="section-header" id="sec-materials">📚 LEITURAS COMPLEMENTARES</div>
+
+        <div class="search-box">
+            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Buscar palavra-chave..."
+                oninput="filterTexts()">
+            <select id="filterCategory" class="filter-select" onchange="filterTexts()">
+                <option value="all">TODAS AS CATEGORIAS</option>
+                <option value="vocabulary">VOCABULÁRIO</option>
+                <option value="syntax">CÓDIGO & SINTAXE</option>
+                <option value="career">CARREIRA & REUNIÕES</option>
+            </select>
+        </div>
+
+        <!-- LISTA DE TEXTOS BASE -->
+        <div class="text-list" id="textList">
+            <!-- Renderizado via JavaScript -->
+        </div>
+
+        <!-- CONTROLE DE PAGINAÇÃO -->
+        <div class="pagination">
+            <button class="page-btn" id="btnPrev" onclick="changePage(-1)">◄ ANTERIOR</button>
+            <span class="page-info" id="pageInfo">PÁGINA 1 DE 1</span>
+            <button class="page-btn" id="btnNext" onclick="changePage(1)">PRÓXIMA ►</button>
+        </div>
+    </main>
+
+    <!-- MODAL DE LEITURA DE TEXTO -->
+    <div class="modal-overlay" id="readModal">
+        <div class="modal-card">
+            <button class="modal-close" onclick="closeModal()">X</button>
+            <h2 class="modal-title" id="modalTitle">TÍTULO DO MATERIAL</h2>
+            <div class="modal-content-text" id="modalBody">
+                Conteúdo completo aqui...
+            </div>
+            <div class="modal-vocab-box">
+                <div class="modal-vocab-title">📌 GLOSSÁRIO & DICAS</div>
+                <p id="modalVocab" style="color: #ccc; font-size: 1.1rem;"></p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p id="footer-text">PROJETO DE ALUNOS DA UNINTER • 2026</p>
+    </footer>
+
+    <script>
+        // BASE DE DADOS FACILMENTE EXPANSÍVEL (BASTA ADICIONAR NOVOS OBJETOS AQUI)
+        const rawTexts = [
+            {
+                id: 1, category: "vocabulary",
+                easy: {
+                    title: "1. Falsos Cognatos na TI",
+                    summary: "Cuidado com 'Push', 'Pull' e 'Library'. Eles não significam o que parecem à primeira vista!",
+                    fullContent: "No desenvolvimento de software, os falsos cognatos podem causar grandes confusões.\n\n• Push: Significa empurrar/enviar (enviar código local para o servidor remoto).\n• Pull: Significa puxar/trazer (trazer alterações do servidor para sua máquina).\n• Library: Não é livraria, é biblioteca de código!\n• Pretend: Não é pretender, é fingir.",
+                    vocab: "Push = Enviar | Pull = Puxar | Library = Biblioteca"
+                },
+                medium: {
+                    title: "1. False Friends in Tech",
+                    summary: "Beware of terms like Push, Pull, and Library in technical contexts.",
+                    fullContent: "False friends (false cognates) are words that look similar in Portuguese but have totally different meanings in English technical terminology.\n\nAlways verify verbs when executing terminal commands to prevent accidental overrides on remote repositories.",
+                    vocab: "Cognates = Palavras parecidas | Override = Sobrescrever"
+                },
+                hard: {
+                    title: "1. False Friends in Tech",
+                    summary: "Avoid critical mishaps in version control by properly distinguishing technical false cognates.",
+                    fullContent: "In Version Control Systems (VCS) like Git, misunderstanding basic directives causes severe pipeline issues. For instance, executing a force push instead of a fetch and pull can overwrite upstream commits permanently.",
+                    vocab: "Upstream = Repositório central | Pipeline = Fluxo de automação"
+                }
+            },
+            {
+                id: 2, category: "syntax",
+                easy: {
+                    title: "2. O termo 'Bug' e 'Debugging'",
+                    summary: "Entenda a origem de encontrar erros no sistema e como resolvê-los.",
+                    fullContent: "Um 'Bug' é qualquer erro ou comportamento inesperado em um programa de computador.\n\nO processo de encontrar e corrigir esses erros chama-se 'Debugging' (Depuração). Durante esse processo, usaremos ferramentas chamadas Debuggers para rodar o código passo a passo.",
+                    vocab: "Bug = Erro | Debugging = Depuração / Correção de erros"
+                },
+                medium: {
+                    title: "2. 'Bug' and 'Debugging'",
+                    summary: "A 'Bug' is a system flaw. 'Debugging' is the process of resolving it.",
+                    fullContent: "Software bugs can occur due to logic errors, syntax mistakes, or unexpected user inputs. Debugging involves setting 'breakpoints' to freeze execution and inspect runtime variable values.",
+                    vocab: "Breakpoint = Ponto de parada no código | Runtime = Tempo de execução"
+                },
+                hard: {
+                    title: "2. 'Bug' and 'Debugging'",
+                    summary: "Systematic inspection and execution tracing in modern debugging.",
+                    fullContent: "Debugging modern distributed applications requires tracing logs, observing thread behavior, and analyzing memory dumps to isolate memory leaks and concurrency race conditions.",
+                    vocab: "Memory Leak = Vazamento de memória | Race condition = Condição de corrida"
+                }
+            },
+            {
+                id: 3, category: "career",
+                easy: {
+                    title: "3. O que é 'Daily Standup'?",
+                    summary: "A reunião diária de 15 minutos usada na metodologia Ágil.",
+                    fullContent: "A Daily Standup (ou apenas Daily) é uma reunião muito curta realizada em pé para garantir rapidez.\n\nVocê responde a 3 perguntas:\n1. O que eu fiz ontem?\n2. O que farei hoje?\n3. Existe algum impedimento (blocker)?",
+                    vocab: "Daily = Reunião diária | Blocker = Impedimento/Trava"
+                },
+                medium: {
+                    title: "3. What is a 'Daily Standup'?",
+                    summary: "A short 15-minute Agile ceremony for daily alignment.",
+                    fullContent: "Daily Standups help software engineering teams sync their daily tasks and communicate impediments early before they delay the sprint deliverable.",
+                    vocab: "Sync = Sincronizar | Sprint = Ciclo de trabalho"
+                },
+                hard: {
+                    title: "3. What is a 'Daily Standup'?",
+                    summary: "Agile alignment aimed at mitigating bottlenecks.",
+                    fullContent: "Effective standups maintain alignment across engineering teams without devolving into lengthy technical discussions. Any deep technical issue should be taken offline after the standup ends.",
+                    vocab: "Bottleneck = Gargalo de produção | Taken offline = Discutido depois"
+                }
+            },
+            {
+                id: 4, category: "vocabulary",
+                easy: {
+                    title: "4. Entendendo 'Deploy'",
+                    summary: "Aprenda o que significa colocar o sistema para rodar de verdade.",
+                    fullContent: "Fazer 'Deploy' (ou Implantação) significa mover o código pronto do seu computador de desenvolvimento para um servidor web real, tornando o sistema acessível aos usuários finais.",
+                    vocab: "Deploy = Implantar / Colocar no ar | Server = Servidor"
+                },
+                medium: {
+                    title: "4. Understanding 'Deploy'",
+                    summary: "Publishing code from local setup to live production.",
+                    fullContent: "Deploying code involves automated CI/CD tools that build, test, and release application updates directly into staging or production servers smoothly.",
+                    vocab: "Staging = Ambiente de testes | Production = Ambiente real"
+                },
+                hard: {
+                    title: "4. Understanding 'Deploy'",
+                    summary: "Automated continuous delivery and deployment strategies.",
+                    fullContent: "Advanced deployment models like Blue-Green or Canary releases reduce downtime risk by routing traffic gradually to updated server instances.",
+                    vocab: "Downtime = Tempo fora do ar | Route = Rrotear/Direcionar"
+                }
+            },
+            {
+                id: 5, category: "syntax",
+                easy: {
+                    title: "5. 'Framework' vs 'Library'",
+                    summary: "Qual a diferença entre uma biblioteca e um arcabouço?",
+                    fullContent: "• Library (Biblioteca): Você chama a função quando precisa. Você controla o fluxo.\n• Framework: O framework controla o fluxo e chama o seu código nos momentos certos (Inversão de Controle).",
+                    vocab: "Framework = Estrutura/Arcabouço | Call = Chamar/Executar"
+                },
+                medium: {
+                    title: "5. 'Framework' vs 'Library'",
+                    summary: "Understanding architectural control and code execution.",
+                    fullContent: "The key technical difference lies in Inversion of Control (IoC). With a library, you are in charge of application flow; with a framework, the framework controls the architecture.",
+                    vocab: "Inversion of Control = Inversão de controle"
+                },
+                hard: {
+                    title: "5. 'Framework' vs 'Library'",
+                    summary: "Structural differences in software engineering design patterns.",
+                    fullContent: "Frameworks enforce strict architectural patterns (e.g., MVC, Component Trees) requiring developers to write code within predefined lifecycles and boundaries.",
+                    vocab: "Lifecycle = Ciclo de vida | Predefined = Pré-definido"
+                }
+            },
+            {
+                id: 6, category: "career",
+                easy: {
+                    title: "6. Lidar com 'Blockers'",
+                    summary: "O que fazer quando você fica travado em uma tarefa?",
+                    fullContent: "Um 'Blocker' é qualquer problema que te impede de continuar programando. Pode ser um erro de código sem solução, falta de acesso a um banco de dados ou dependência de outro colega.",
+                    vocab: "Blocker = Bloqueio/Impedimento | Task = Tarefa"
+                },
+                medium: {
+                    title: "6. Dealing with 'Blockers'",
+                    summary: "Communicating hurdles early to keep project timelines safe.",
+                    fullContent: "When encountering a blocker, attempt self-debugging first, but raise the issue quickly during standups if you remain stuck to avoid missing sprint goals.",
+                    vocab: "Stuck = Travado/Empacado | Raise = Levantar/Comunicar"
+                },
+                hard: {
+                    title: "6. Dealing with 'Blockers'",
+                    summary: "Proactive risk management in Agile environments.",
+                    fullContent: "Unresolved blockers degrade sprint velocity. Engineering leaders must actively unblock developers by removing administrative or technical dependencies immediately.",
+                    vocab: "Velocity = Velocidade da equipe | Degrade = Prejudicar"
+                }
+            },
+            {
+                id: 7, category: "vocabulary",
+                easy: {
+                    title: "7. O conceito de 'API'",
+                    summary: "Como dois sistemas conversam entre si?",
+                    fullContent: "API significa Application Programming Interface. É como um garçom em um restaurante: pega seu pedido (requisição), leva à cozinha (servidor) e traz sua comida (resposta).",
+                    vocab: "Request = Requisição/Pedido | Response = Resposta"
+                },
+                medium: {
+                    title: "7. The 'API' Concept",
+                    summary: "Interfaces that facilitate communication between applications.",
+                    fullContent: "APIs define sets of rules and formats (like JSON) that applications use to exchange data efficiently over HTTP protocols.",
+                    vocab: "Exchange = Trocar/Intercambiar | Rules = Regras"
+                },
+                hard: {
+                    title: "7. The 'API' Concept",
+                    summary: "RESTful architecture, endpoints, and data contracts.",
+                    fullContent: "Modern APIs implement RESTful guidelines or GraphQL schemas, exposing structured endpoints protected by tokens like JWT for authentication.",
+                    vocab: "Endpoint = Ponto de acesso | Schema = Esquema de dados"
+                }
+            },
+            {
+                id: 8, category: "syntax",
+                easy: {
+                    title: "8. 'Frontend' vs 'Backend'",
+                    summary: "A divisão visual e lógica no desenvolvimento web.",
+                    fullContent: "• Frontend: É a parte visual que o usuário vê e clica (HTML, CSS, JavaScript).\n• Backend: É o lado do servidor, que cuida de banco de dados, senhas e segurança.",
+                    vocab: "User Interface = Interface do usuário | Database = Banco de dados"
+                },
+                medium: {
+                    title: "8. 'Frontend' vs 'Backend'",
+                    summary: "Client-side vs Server-side responsibilities.",
+                    fullContent: "Frontend developers focus on responsive layouts and user experience, while Backend developers build server APIs, maintain databases, and implement business logic.",
+                    vocab: "Client-side = Lado do cliente | Server-side = Lado do servidor"
+                },
+                hard: {
+                    title: "8. 'Frontend' vs 'Backend'",
+                    summary: "Decoupled web architecture and full-stack integration.",
+                    fullContent: "Decoupled web applications separate client-side SPA frameworks from microservices in the backend, linked securely through asynchronous requests.",
+                    vocab: "Decoupled = Desacoplado | Asynchronous = Assíncrono"
+                }
+            },
+            {
+                id: 9, category: "career",
+                easy: {
+                    title: "9. Feedback em 'Code Review'",
+                    summary: "Aprenda como é feita a revisão de código no trabalho.",
+                    fullContent: "O 'Code Review' acontece quando você termina um código e pede para outro programador ler antes de enviar para o sistema final. Serve para encontrar erros e aprender novas técnicas.",
+                    vocab: "Code Review = Revisão de código | Feedback = Retorno/Avaliação"
+                },
+                medium: {
+                    title: "9. 'Code Review' Feedback",
+                    summary: "Peer review practices for maintaining high code quality.",
+                    fullContent: "Code reviews encourage knowledge sharing and ensure that submitted pull requests meet team coding standards before merging into the main branch.",
+                    vocab: "Pull Request = Solicitação de alteração | Merge = Mesclar"
+                },
+                hard: {
+                    title: "9. 'Code Review' Feedback",
+                    summary: "Maintaining maintainability and preventing regressions.",
+                    fullContent: "Constructive peer reviews catch architectural debt, vulnerability vectors, and performance bottlenecks early in the development lifecycle.",
+                    vocab: "Vulnerability = Vulnerabilidade | Debt = Dívida técnica"
+                }
+            },
+            {
+                id: 10, category: "vocabulary",
+                easy: {
+                    title: "10. 'Refactoring' sem medo",
+                    summary: "Como organizar o código antigo sem estragar nada.",
+                    fullContent: "Refatorar (Refactoring) significa melhorar a estrutura interna do seu código para deixá-lo mais limpo e legível, sem alterar o que ele faz de verdade por fora.",
+                    vocab: "Clean Code = Código limpo | Readable = Legível"
+                },
+                medium: {
+                    title: "10. 'Refactoring' Cleanly",
+                    summary: "Improving code internal structure without altering external output.",
+                    fullContent: "Refactoring reduces technical debt, making code easier to maintain and extend with new features in future development cycles.",
+                    vocab: "Extend = Extender/Ampliar | Feature = Funcionalidade"
+                },
+                hard: {
+                    title: "10. 'Refactoring' Cleanly",
+                    summary: "Code maintainability and anti-pattern elimination.",
+                    fullContent: "Refactoring relies on unit testing coverage to ensure that code cleanup eliminates code smells without triggering regressions.",
+                    vocab: "Code Smell = Indicador de código ruim | Regression = Regressão/Erro novo"
+                }
+            }
+        ];
+
+        // TRADUÇÕES DA INTERFACE BASE
+        const translations = {
+            easy: {
+                navStart: "INÍCIO", navW1: "MUNDO 1", navW2: "MUNDO 2", navBonus: "BÔNUS",
+                lblDiff: "NÍVEL:",
+                pageTitle: "MUNDO 1-2: MATERIAIS & DICAS",
+                secTrivia: "💡 CURIOSIDADES DA TI",
+                t1Title: "O PRIMEIRO BUG", t1Desc: "Em 1947, uma mariposa real ficou presa num relé do computador Harvard Mark II. Grace Hopper colou o inseto no diário de bordo!",
+                t2Title: "FOO & BAR", t2Desc: "Usados como nomes genéricos em código, 'Foobar' vem do termo militar 'FUBAR' dos anos 1940.",
+                t3Title: "PYTHON & MONTY", t3Desc: "O nome da linguagem Python não veio da cobra, mas sim do grupo de comédia britânico 'Monty Python'!",
+                secMaterials: "📚 LEITURAS COMPLEMENTARES",
+                searchPlaceholder: "🔍 Buscar palavra-chave...",
+                catAll: "TODAS AS CATEGORIAS", catVocab: "VOCABULÁRIO", catSyntax: "CÓDIGO & SINTAXE", catCareer: "CARREIRA & REUNIÕES",
+                btnPrev: "◄ ANTERIOR", btnNext: "PRÓXIMA ►", pageTemplate: "PÁGINA {c} DE {t}",
+                clickHint: "► CLIQUE PARA LER O TEXTO COMPLETO",
+                footerText: "PROJETO DE ALUNOS DA UNINTER • 2026"
+            },
+            medium: {
+                navStart: "START", navW1: "WORLD 1", navW2: "WORLD 2", navBonus: "BONUS",
+                lblDiff: "LEVEL:",
+                pageTitle: "WORLD 1-2: MATERIALS & TIPS",
+                secTrivia: "💡 TECH TRIVIA",
+                t1Title: "THE FIRST BUG", t1Desc: "In 1947, an actual moth was trapped in a relay of the Harvard Mark II computer. Grace Hopper taped the bug into the logbook!",
+                t2Title: "FOO & BAR", t2Desc: "Used as placeholder names in code, 'Foobar' originates from WWII military slang 'FUBAR'.",
+                t3Title: "PYTHON & MONTY", t3Desc: "The Python programming language was named after the British comedy group 'Monty Python', not the snake!",
+                secMaterials: "📚 COMPLEMENTARY READINGS",
+                searchPlaceholder: "🔍 Search keyword...",
+                catAll: "ALL CATEGORIES", catVocab: "VOCABULARY", catSyntax: "CODE & SYNTAX", catCareer: "CAREER & MEETINGS",
+                btnPrev: "◄ PREVIOUS", btnNext: "NEXT ►", pageTemplate: "PAGE {c} OF {t}",
+                clickHint: "► CLICK TO READ FULL MATERIAL",
+                footerText: "PROJETO DE ALUNOS DA UNINTER • 2026"
+            },
+            hard: {
+                navStart: "START", navW1: "WORLD 1", navW2: "WORLD 2", navBonus: "BONUS",
+                lblDiff: "LEVEL:",
+                pageTitle: "WORLD 1-2: MATERIALS & TIPS",
+                secTrivia: "💡 TECH TRIVIA",
+                t1Title: "THE FIRST BUG", t1Desc: "In 1947, an actual moth was trapped in a relay of the Harvard Mark II computer. Grace Hopper taped the bug into the logbook!",
+                t2Title: "FOO & BAR", t2Desc: "Used as placeholder names in code, 'Foobar' originates from WWII military slang 'FUBAR'.",
+                t3Title: "PYTHON & MONTY", t3Desc: "The Python programming language was named after the British comedy group 'Monty Python', not the snake!",
+                secMaterials: "📚 COMPLEMENTARY READINGS",
+                searchPlaceholder: "🔍 Search keyword...",
+                catAll: "ALL CATEGORIES", catVocab: "VOCABULARY", catSyntax: "CODE & SYNTAX", catCareer: "CAREER & MEETINGS",
+                btnPrev: "◄ PREVIOUS", btnNext: "NEXT ►", pageTemplate: "PAGE {c} OF {t}",
+                clickHint: "► CLICK TO READ FULL MATERIAL",
+                footerText: "UNINTER STUDENTS PROJECT • 2026"
+            }
+        };
+
+        let currentLang = 'easy';
+        let currentPage = 1;
+        const itemsPerPage = 5;
+        let filteredData = [];
+
+        function setDifficulty(lang) {
+            currentLang = lang;
+            const data = translations[lang];
+
+            document.querySelectorAll('.diff-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            document.getElementById('nav-start').innerText = data.navStart;
+            document.getElementById('nav-w1').innerText = data.navW1;
+            document.getElementById('nav-w2').innerText = data.navW2;
+            document.getElementById('nav-bonus').innerText = data.navBonus;
+            document.getElementById('lbl-diff').innerText = data.lblDiff;
+
+            document.getElementById('page-title').innerText = data.pageTitle;
+            document.getElementById('sec-trivia').innerText = data.secTrivia;
+            document.getElementById('t1-title').innerText = data.t1Title;
+            document.getElementById('t1-desc').innerText = data.t1Desc;
+            document.getElementById('t2-title').innerText = data.t2Title;
+            document.getElementById('t2-desc').innerText = data.t2Desc;
+            document.getElementById('t3-title').innerText = data.t3Title;
+            document.getElementById('t3-desc').innerText = data.t3Desc;
+
+            document.getElementById('sec-materials').innerText = data.secMaterials;
+            document.getElementById('searchInput').placeholder = data.searchPlaceholder;
+
+            const select = document.getElementById('filterCategory');
+            select.options[0].text = data.catAll;
+            select.options[1].text = data.catVocab;
+            select.options[2].text = data.catSyntax;
+            select.options[3].text = data.catCareer;
+
+            document.getElementById('btnPrev').innerText = data.btnPrev;
+            document.getElementById('btnNext').innerText = data.btnNext;
+            document.getElementById('footer-text').innerText = data.footerText;
+
+            filterTexts();
+        }
+
+        function filterTexts() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const category = document.getElementById('filterCategory').value;
+
+            filteredData = rawTexts.filter(item => {
+                const textObj = item[currentLang];
+                const matchesQuery = textObj.title.toLowerCase().includes(query) || textObj.summary.toLowerCase().includes(query);
+                const matchesCat = category === 'all' || item.category === category;
+                return matchesQuery && matchesCat;
+            });
+
+            currentPage = 1;
+            renderList();
+        }
+
+        function renderList() {
+            const listContainer = document.getElementById('textList');
+            listContainer.innerHTML = '';
+
+            const totalPages = Math.ceil(filteredData.length / itemsPerPage) || 1;
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const pageItems = filteredData.slice(start, end);
+
+            if (pageItems.length === 0) {
+                listContainer.innerHTML = `<div style="text-align:center; padding: 2rem; color: #777;">[ NENHUM TEXTO ENCONTRADO ]</div>`;
+            } else {
+                pageItems.forEach(item => {
+                    const data = item[currentLang];
+                    const div = document.createElement('div');
+                    div.className = 'text-item';
+                    div.onclick = () => openModal(item.id);
+                    div.innerHTML = `
+                        <div class="text-header">
+                            <span class="text-title">${data.title}</span>
+                            <span class="text-category">${item.category.toUpperCase()}</span>
+                        </div>
+                        <p class="text-body">${data.summary}</p>
+                        <span class="click-hint">${translations[currentLang].clickHint}</span>
+                    `;
+                    listContainer.appendChild(div);
+                });
+            }
+
+            // Atualiza botões e indicador de página
+            document.getElementById('btnPrev').disabled = currentPage === 1;
+            document.getElementById('btnNext').disabled = currentPage >= totalPages;
+
+            const template = translations[currentLang].pageTemplate;
+            document.getElementById('pageInfo').innerText = template.replace('{c}', currentPage).replace('{t}', totalPages);
+        }
+
+        function changePage(direction) {
+            currentPage += direction;
+            renderList();
+            window.scrollTo({ top: document.getElementById('sec-materials').offsetTop - 20, behavior: 'smooth' });
+        }
+
+        /* LÓGICA DO MODAL DE LEITURA */
+        function openModal(id) {
+            const item = rawTexts.find(t => t.id === id);
+            if (!item) return;
+
+            const data = item[currentLang];
+            document.getElementById('modalTitle').innerText = data.title;
+            document.getElementById('modalBody').innerText = data.fullContent;
+            document.getElementById('modalVocab').innerText = data.vocab;
+
+            document.getElementById('readModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('readModal').classList.remove('active');
+        }
+
+        // Fechar modal ao clicar fora da caixa
+        window.onclick = function (event) {
+            const modal = document.getElementById('readModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        };
+
+        // Inicialização
+        filterTexts();
+    </script>
+</body>
+
+</html>

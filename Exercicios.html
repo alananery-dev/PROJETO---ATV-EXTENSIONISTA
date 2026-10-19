@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechLingo | Arena de Exercícios</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <link rel="shortcut icon" href="img/TechLingo.ico" type="img/TechLingo.ico">
+    <style>
+        :root {
+            --sky-blue: #5c94fc;
+            --grass-green: #00ff66;
+            --brick-red: #ff3366;
+            --coin-yellow: #c342ff;
+            --block-brown: #8c10e4;
+            --dark-bg: #000000;
+            --text-white: #ffffff;
+            --btn-neutral: #222222;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-white);
+            font-family: 'VT323', monospace;
+            font-size: 1.3rem;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: #111;
+            border-bottom: 4px solid var(--coin-yellow);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.9rem;
+            color: var(--coin-yellow);
+            text-decoration: none;
+            text-shadow: 2px 2px #000;
+        }
+
+        nav { display: flex; gap: 1.5rem; align-items: center; }
+        nav a { font-family: 'Press Start 2P', cursive; font-size: 0.6rem; color: #fff; text-decoration: none; }
+        nav a.active { color: var(--coin-yellow); }
+
+        .top-controls { display: flex; align-items: center; gap: 1rem; }
+        .difficulty-selector {
+            display: flex; align-items: center; gap: 0.5rem;
+            background: #222; border: 2px solid var(--coin-yellow); padding: 0.3rem 0.6rem;
+        }
+        .diff-btn {
+            font-family: 'Press Start 2P', cursive; font-size: 0.5rem;
+            background: #444; color: #fff; border: 1px solid #fff; padding: 0.3rem 0.5rem; cursor: pointer;
+        }
+        .diff-btn.active { background: var(--block-brown); border-color: var(--coin-yellow); }
+
+        main { flex: 1; max-width: 950px; width: 100%; margin: 0 auto; padding: 2rem 1rem; }
+
+        .page-title {
+            font-family: 'Press Start 2P', cursive; font-size: 1.2rem;
+            color: var(--coin-yellow); text-shadow: 3px 3px var(--block-brown);
+            text-align: center; margin-bottom: 0.5rem;
+        }
+
+        .area-select-box { margin-bottom: 2rem; text-align: center; }
+        .area-select {
+            background: #111; color: var(--coin-yellow); border: 2px solid var(--coin-yellow);
+            font-family: 'VT323', monospace; font-size: 1.4rem; padding: 0.6rem 1rem; outline: none; cursor: pointer; width: 100%; max-width: 500px;
+        }
+
+        .modes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
+        .mode-card {
+            background: #111; border: 4px solid var(--block-brown); padding: 1.5rem;
+            text-align: center; box-shadow: 6px 6px 0px #000; cursor: pointer;
+            display: flex; flex-direction: column; justify-content: space-between; gap: 1rem;
+        }
+        .mode-card:hover { border-color: var(--coin-yellow); }
+
+        .start-btn {
+            font-family: 'Press Start 2P', cursive; font-size: 0.65rem;
+            background: var(--block-brown); color: #fff; border: 2px solid #fff; padding: 0.6rem 1rem; cursor: pointer;
+        }
+        .start-btn:hover { background: var(--coin-yellow); color: #000; }
+
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.92); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 1rem;
+        }
+        .modal-overlay.active { display: flex; }
+
+        .modal-card {
+            background: #111; border: 4px solid var(--coin-yellow); box-shadow: 8px 8px 0px #000;
+            max-width: 750px; width: 100%; padding: 1.5rem 2rem; display: flex; flex-direction: column; gap: 1rem; max-height: 90vh; overflow-y: auto;
+        }
+
+        .hud-inner {
+            display: flex; gap: 1.5rem; align-items: center; background: #000;
+            border: 2px solid var(--block-brown); padding: 0.4rem 0.8rem; font-family: 'Press Start 2P', cursive; font-size: 0.65rem;
+        }
+
+        .question-box { font-size: 1.3rem; line-height: 1.4; background: #000; border: 2px solid #fff; padding: 1rem; }
+        .options-grid { display: flex; flex-direction: column; gap: 0.6rem; }
+
+        .option-btn {
+            background: var(--btn-neutral); border: 2px solid #fff; color: #fff;
+            font-family: 'VT323', monospace; font-size: 1.3rem; padding: 0.7rem 1rem; text-align: left; cursor: pointer;
+        }
+        .option-btn.btn-correct { background: rgba(0, 255, 102, 0.25) !important; border-color: var(--grass-green) !important; color: var(--grass-green) !important; }
+        .option-btn.btn-wrong { background: rgba(255, 51, 102, 0.25) !important; border-color: var(--brick-red) !important; color: var(--brick-red) !important; }
+
+        .input-written {
+            width: 100%; background: #000; border: 2px solid #fff; color: #fff;
+            font-family: 'VT323', monospace; font-size: 1.3rem; padding: 0.8rem; outline: none;
+        }
+
+        .feedback-box { font-family: 'Press Start 2P', cursive; font-size: 0.6rem; padding: 0.8rem; display: none; border: 2px solid transparent; }
+        .feedback-box.correct { display: block; background: rgba(0, 255, 102, 0.15); border-color: var(--grass-green); color: var(--grass-green); }
+        .feedback-box.wrong { display: block; background: rgba(255, 51, 102, 0.15); border-color: var(--brick-red); color: var(--brick-red); }
+
+        .victory-card, .recharge-card {
+            display: none; flex-direction: column; align-items: center; text-align: center; gap: 1.2rem;
+            background: #000; border: 4px double var(--grass-green); padding: 2rem 1.5rem;
+        }
+        .recharge-card { border-color: var(--brick-red); }
+        .victory-card.active, .recharge-card.active { display: flex; }
+
+        .vic-btn { font-family: 'Press Start 2P', cursive; font-size: 0.65rem; padding: 0.8rem 1.2rem; border: 2px solid #fff; cursor: pointer; }
+        footer { text-align: center; padding: 1.5rem; border-top: 4px solid #222; font-size: 1.1rem; color: #777; margin-top: 3rem; }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <a href="index.html" class="logo">🎮 TechLingo</a>
+        <nav>
+            <a href="index.html" id="nav-home">INÍCIO</a>
+            <a href="exercicios.html" class="active" id="nav-world1">MUNDO 1</a>
+            <a href="materiais.html" id="nav-world2">MUNDO 2</a>
+            <a href="feedback.html" id="nav-bonus">BÔNUS</a>
+        </nav>
+        <div class="top-controls">
+            <div class="difficulty-selector">
+                <span style="font-family: 'Press Start 2P'; font-size: 0.55rem; color: var(--coin-yellow);" id="label-diff">NÍVEL:</span>
+                <button class="diff-btn active" id="btn-easy" onclick="setDifficulty('easy')">FÁCIL</button>
+                <button class="diff-btn" id="btn-medium" onclick="setDifficulty('medium')">MÉDIO</button>
+                <button class="diff-btn" id="btn-hard" onclick="setDifficulty('hard')">DIFÍCIL</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <h1 class="page-title" id="txt-page-title">MUNDO 1-1: ARENA DE EXERCÍCIOS</h1>
+        
+        <div class="area-select-box">
+            <label style="display: block; margin-bottom: 0.5rem;" id="txt-select-topic">Escolha o Tópico / Área de Estudo:</label>
+            <select class="area-select" id="areaDropdown" onchange="changeArea()"></select>
+        </div>
+
+        <div class="modes-grid">
+            <div class="mode-card" onclick="openQuestModal('listening')">
+                <div style="font-size: 2.5rem;">🎧</div>
+                <h2 style="font-family: 'Press Start 2P'; font-size: 0.85rem; color: var(--coin-yellow);" id="title-list">LISTENING QUEST</h2>
+                <p id="desc-list">Treine a escuta técnica na área selecionada.</p>
+                <button class="start-btn" id="btn-start-list">INICIAR QUESTE</button>
+            </div>
+
+            <div class="mode-card" onclick="openQuestModal('reading')">
+                <div style="font-size: 2.5rem;">📖</div>
+                <h2 style="font-family: 'Press Start 2P'; font-size: 0.85rem; color: var(--coin-yellow);" id="title-read">READING QUEST</h2>
+                <p id="desc-read">Interprete textos e conceitos do tópico escolhido.</p>
+                <button class="start-btn" id="btn-start-read">INICIAR QUESTE</button>
+            </div>
+
+            <div class="mode-card" onclick="openQuestModal('writing')">
+                <div style="font-size: 2.5rem;">✍️</div>
+                <h2 style="font-family: 'Press Start 2P'; font-size: 0.85rem; color: var(--coin-yellow);" id="title-write">WRITING QUEST</h2>
+                <p id="desc-write">Digite termos com acurácia técnica.</p>
+                <button class="start-btn" id="btn-start-write">INICIAR QUESTE</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- MODAL -->
+    <div class="modal-overlay" id="questModal">
+        <div class="modal-card">
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #333; padding-bottom: 0.8rem;">
+                <div class="hud-inner">
+                    <span id="modalLives" style="color: var(--brick-red);">HP: ❤️❤️❤️</span>
+                    <span id="modalScore" style="color: var(--coin-yellow);">PTS: 0000</span>
+                </div>
+                <button style="background: var(--brick-red); color: #fff; border: 2px solid #fff; font-family: 'Press Start 2P'; font-size: 0.65rem; padding: 0.3rem 0.6rem; cursor: pointer;" onclick="closeQuestModal()">X</button>
+            </div>
+
+            <div id="exerciseArea" style="display: flex; flex-direction: column; gap: 1rem;">
+                <div class="question-box" id="questionText">Carregando...</div>
+                <div id="audioArea" style="display: none;">
+                    <button style="font-family: 'Press Start 2P'; font-size: 0.65rem; background: var(--sky-blue); padding: 0.6rem 1rem; border: 2px solid #fff; cursor: pointer;" onclick="playQuestionAudio()" id="btn-audio">🔊 OUVIR ÁUDIO</button>
+                </div>
+                <div class="options-grid" id="optionsContainer"></div>
+                <div class="feedback-box" id="feedbackBox"></div>
+
+                <div style="display: flex; justify-content: space-between; gap: 1rem;">
+                    <button class="start-btn" id="btnPrev" onclick="navigateQuestion(-1)">◄ ANTERIOR</button>
+                    <button class="start-btn" id="btnNext" onclick="navigateQuestion(1)">PRÓXIMA ►</button>
+                </div>
+            </div>
+
+            <!-- TELA DE RECARGA DE VIDAS -->
+            <div class="recharge-card" id="rechargeArea">
+                <div style="font-size: 3rem;">💀</div>
+                <h2 style="font-family: 'Press Start 2P'; color: var(--brick-red);">GAME OVER - RECARGA DE HP</h2>
+                <p>Suas vidas acabaram! Leia o texto técnico e responda corretamente para recuperar todas as vidas (HP 100%).</p>
+                
+                <div style="background: #111; border: 2px solid var(--coin-yellow); padding: 1rem; text-align: left; width: 100%; font-size: 1.1rem; line-height: 1.4; color: #fff;" id="rechargeText">
+                    <!-- Texto Base -->
+                </div>
+
+                <div class="question-box" style="width: 100%; margin-top: 0.5rem;" id="rechargeQuestionText"></div>
+                <div class="options-grid" style="width: 100%;" id="rechargeOptionsContainer"></div>
+                <div class="feedback-box" id="rechargeFeedbackBox"></div>
+            </div>
+
+            <!-- TELA DE VITÓRIA -->
+            <div class="victory-card" id="victoryArea">
+                <div style="font-size: 3rem;">🏆</div>
+                <h2 style="font-family: 'Press Start 2P'; color: var(--grass-green);" id="txt-vic-title">QUEST CLEARED!</h2>
+                <p id="txt-vic-desc">Você concluiu todas as questões disponíveis desta área!</p>
+                <p><span id="lbl-vic-score">PONTUAÇÃO FINAL</span>: <span id="vicFinalScore" style="color: var(--coin-yellow);">0000</span></p>
+                <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                    <button class="vic-btn" style="background: var(--block-brown); color: #fff;" onclick="restartQuest()" id="btn-vic-retry">🔄 TENTAR DE NOVO</button>
+                    <button class="vic-btn" style="background: #333; color: #fff;" onclick="closeQuestModal()" id="btn-vic-exit">🚪 MENU DE ATIVIDADES</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <footer>
+        <p>PROJETO DE ALUNOS DA UNINTER • 2026</p>
+    </footer>
+
+    <script>
+        const uiTranslations = {
+            easy: {
+                navHome: "INÍCIO", navWorld1: "MUNDO 1", navWorld2: "MUNDO 2", navBonus: "BÔNUS",
+                labelDiff: "NÍVEL:", btnEasy: "FÁCIL", btnMedium: "MÉDIO", btnHard: "DIFÍCIL",
+                titlePage: "MUNDO 1-1: ARENA DE EXERCÍCIOS", selectTopic: "Escolha o Tópico / Área de Estudo:",
+                titleList: "LISTENING QUEST", descList: "Treine a escuta técnica na área selecionada.", btnStartList: "INICIAR QUESTE",
+                titleRead: "READING QUEST", descRead: "Interprete textos e conceitos do tópico escolhido.", btnStartRead: "INICIAR QUESTE",
+                titleWrite: "WRITING QUEST", descWrite: "Digite termos com acurácia técnica.", btnStartWrite: "INICIAR QUESTE",
+                btnAudio: "🔊 OUVIR ÁUDIO", btnPrev: "◄ ANTERIOR", btnNext: "PRÓXIMA ►", btnFinish: "CONCLUIR 🏁",
+                vicTitle: "QUEST CLEARED!", vicDesc: "Você concluiu todas as questões disponíveis desta área!",
+                vicScore: "PONTUAÇÃO FINAL", btnVicRetry: "🔄 TENTAR DE NOVO", btnVicExit: "🚪 MENU DE ATIVIDADES",
+                writeBtn: "VERIFICAR RESPOSTA"
+            },
+            medium: {
+                navHome: "HOME", navWorld1: "WORLD 1", navWorld2: "WORLD 2", navBonus: "BONUS",
+                labelDiff: "LEVEL:", btnEasy: "EASY", btnMedium: "MEDIUM", btnHard: "HARD",
+                titlePage: "WORLD 1-1: EXERCISE ARENA", selectTopic: "Select Topic / Area of Study:",
+                titleList: "LISTENING QUEST", descList: "Train technical listening in the selected topic.", btnStartList: "START QUEST",
+                titleRead: "READING QUEST", descRead: "Interpret texts and concepts from the chosen topic.", btnStartRead: "START QUEST",
+                titleWrite: "WRITING QUEST", descWrite: "Type technical terms with accuracy.", btnStartWrite: "START QUEST",
+                btnAudio: "🔊 PLAY AUDIO", btnPrev: "◄ PREVIOUS", btnNext: "NEXT ►", btnFinish: "FINISH 🏁",
+                vicTitle: "QUEST CLEARED!", vicDesc: "You completed all questions available in this section!",
+                vicScore: "FINAL SCORE", btnVicRetry: "🔄 RETRY QUEST", btnVicExit: "🚪 MAIN MENU",
+                writeBtn: "CHECK ANSWER"
+            },
+            hard: {
+                navHome: "HOME", navWorld1: "WORLD 1", navWorld2: "WORLD 2", navBonus: "BONUS",
+                labelDiff: "LEVEL:", btnEasy: "EASY", btnMedium: "MEDIUM", btnHard: "HARD",
+                titlePage: "WORLD 1-1: EXERCISE ARENA", selectTopic: "Select Topic / Area of Study:",
+                titleList: "LISTENING QUEST", descList: "Analyze audio feeds regarding technical architecture.", btnStartList: "EXECUTE QUEST",
+                titleRead: "READING QUEST", descRead: "Evaluate documentation, syntax and concepts.", btnStartRead: "EXECUTE QUEST",
+                titleWrite: "WRITING QUEST", descWrite: "Synthesize technical syntax and commands.", btnStartWrite: "EXECUTE QUEST",
+                btnAudio: "🔊 EXECUTE AUDIO", btnPrev: "◄ PREVIOUS", btnNext: "NEXT ►", btnFinish: "FINISH 🏁",
+                vicTitle: "QUEST CLEARED!", vicDesc: "You successfully completed all operational queries!",
+                vicScore: "FINAL SCORE", btnVicRetry: "🔄 RETRY QUEST", btnVicExit: "🚪 MAIN MENU",
+                writeBtn: "SUBMIT ANSWER"
+            }
+        };
+
+        const db = {
+            areas: [
+                { id: "all", name: "🎲 Todas as Áreas (Mix Geral)" },
+                { id: "infra", name: "🖥️ Infraestrutura de TI" },
+                { id: "fluency", name: "🗣️ Fala Fluída & Pronúncia" },
+                { id: "memory_leak", name: "⚠️ Vazamento de Memória" },
+                { id: "interviews", name: "💼 Vocabulário para Entrevistas" },
+                { id: "tech_english", name: "📚 Aprendizado de Inglês Técnico" },
+                { id: "coding", name: "💻 Programação, Algoritmos & Autonomia" },
+                { id: "meetings", name: "🤝 Termos de Reuniões & Business" },
+                { id: "sql", name: "🛢️ SQL & MySQL" },
+                { id: "api", name: "🔌 API & Integrações" }
+            ],
+             questions: {
+        infra: {
+            pt: [
+                { type: "multiple", mode: "listening", question: "Ouça o componente de infraestrutura de servidores:", audioFile: "audio/infra_01.mp3", options: ["Server Infrastructure", "Memory Leak", "API Key"], answer: 0, explanation: "'Server Infrastructure' refere-se à estrutura física e em nuvem de servidores." },
+                { type: "multiple", mode: "listening", question: "Ouça o tipo de armazenamento em nuvem:", audioFile: "audio/infra_02.mp3", options: ["Cloud Storage", "Local Drive", "Virtual RAM"], answer: 0, explanation: "'Cloud Storage' é o armazenamento de dados em nuvem." },
+                { type: "multiple", mode: "listening", question: "Ouça o componente de alta disponibilidade:", audioFile: "audio/infra_03.mp3", options: ["Load Balancer", "Hard Drive", "Network Switch"], answer: 0, explanation: "'Load Balancer' distribui a carga de tráfego entre múltiplos servidores." },
+                { type: "multiple", mode: "listening", question: "Ouça a técnica de cópia de segurança:", audioFile: "audio/infra_04.mp3", options: ["Data Backup", "System Crash", "Memory Allocation"], answer: 0, explanation: "'Data Backup' é a cópia de segurança de dados." },
+                { type: "multiple", mode: "listening", question: "Ouça o termo para equipamento de comutação de rede:", audioFile: "audio/infra_05.mp3", options: ["Network Switch", "Hard Drive", "CPU Fan"], answer: 0, explanation: "'Network Switch' conecta dispositivos dentro de uma mesma rede local." },
+                { type: "multiple", mode: "listening", question: "Ouça o termo sobre estratégia de recuperação de desastres:", audioFile: "audio/infra_06.mp3", options: ["Data Redundancy", "Memory Leak", "Code Refactor"], answer: 0, explanation: "'Data Redundancy' garante a duplicação e disponibilidade contínua dos dados." },
+                { type: "multiple", mode: "reading", question: "O que significa 'Network Bandwidth'?", options: ["Largura de banda da rede", "Velocidade da CPU", "Tamanho do HD"], answer: 0, explanation: "Capacidade de transmissão de dados em uma rede." },
+                { type: "multiple", mode: "reading", question: "O termo 'IP Address' refere-se a:", options: ["Endereço numérico único na rede", "Senha do roteador", "Código de licença"], answer: 0, explanation: "Identificador numérico único de dispositivos na rede." },
+                { type: "multiple", mode: "reading", question: "O que significa 'Latency' em conexões de rede?", options: ["Tempo de atraso na resposta de envio de dados", "Capacidade do HD", "Velocidade do cooler"], answer: 0, explanation: "Latência mede o tempo de resposta entre o envio e a recepção do pacote." },
+                { type: "multiple", mode: "reading", question: "O termo 'Uptime' indica:", options: ["Tempo em que o servidor permanece operacional sem quedas", "Hora de desligar computadores", "Tempo de atualização"], answer: 0, explanation: "Uptime é o indicador percentual de disponibilidade contínua de um sistema." },
+                { type: "write", mode: "writing", question: "Digite o termo em inglês para 'Rede de Computadores':", answer: "Network", explanation: "Network é o termo exato para rede de computadores." },
+                { type: "write", mode: "writing", question: "Digite em inglês a palavra para 'Servidor':", answer: "Server", explanation: "Server é a máquina que provê serviços para clientes." },
+                { type: "write", mode: "writing", question: "Digite em inglês o termo para 'Corta-fogo / Barreira de Segurança':", answer: "Firewall", explanation: "Firewall é a barreira de segurança de tráfego de rede." },
+                { type: "write", mode: "writing", question: "Digite a sigla do protocolo de transferência de arquivos:", answer: "FTP", explanation: "File Transfer Protocol (FTP)." }
+            ],
+            en: [
+                { type: "multiple", mode: "listening", question: "Listen to the server infrastructure term:", audioFile: "audio/infra_01.mp3", options: ["Server Infrastructure", "Memory Leak", "API Key"], answer: 0, explanation: "'Server Infrastructure' refers to hardware and cloud servers." },
+                { type: "multiple", mode: "listening", question: "Listen to the cloud storage service type:", audioFile: "audio/infra_02.mp3", options: ["Cloud Storage", "Local Drive", "Virtual RAM"], answer: 0, explanation: "'Cloud Storage' holds remote data in cloud servers." },
+                { type: "multiple", mode: "listening", question: "Listen to the load distribution component:", audioFile: "audio/infra_03.mp3", options: ["Load Balancer", "Hard Drive", "Network Switch"], answer: 0, explanation: "'Load Balancer' balances traffic across multiple servers." },
+                { type: "multiple", mode: "listening", question: "Listen to the safety copy term:", audioFile: "audio/infra_04.mp3", options: ["Data Backup", "System Crash", "Memory Allocation"], answer: 0, explanation: "'Data Backup' stores copies of vital data." },
+                { type: "multiple", mode: "listening", question: "Listen to the networking equipment term:", audioFile: "audio/infra_05.mp3", options: ["Network Switch", "Hard Drive", "CPU Fan"], answer: 0, explanation: "A switch connects devices within a Local Area Network." },
+                { type: "multiple", mode: "listening", question: "Listen to the disaster recovery strategy term:", audioFile: "audio/infra_06.mp3", options: ["Data Redundancy", "Memory Leak", "Code Refactor"], answer: 0, explanation: "Data redundancy ensures continuous backup availability." },
+                { type: "multiple", mode: "reading", question: "What does 'Network Bandwidth' measure?", options: ["Network data transmission capacity", "CPU clock speed", "Hard drive size"], answer: 0, explanation: "Bandwidth defines the rate of data transfer." },
+                { type: "multiple", mode: "reading", question: "The term 'IP Address' specifies:", options: ["Unique numerical network identifier", "Router password", "Software license"], answer: 0, explanation: "Identifies devices connected to a network." },
+                { type: "write", mode: "writing", question: "Type the English word for 'Rede de Computadores':", answer: "Network", explanation: "Network is the exact term." },
+                { type: "write", mode: "writing", question: "Type the technical term for server operational time:", answer: "Uptime", explanation: "Uptime measures operational continuous availability." }
+            ]
+        },
+        fluency: {
+            pt: [
+                { type: "multiple", mode: "listening", question: "Ouça a expressão usada para adicionar uma ideia:", audioFile: "audio/fluency_01.mp3", options: ["Além disso", "Portanto", "Por outro lado"], answer: 0, explanation: "'In addition to that' é usado para adicionar informações suplementares." },
+                { type: "multiple", mode: "listening", question: "Ouça o conector de conclusão de raciocínio:", audioFile: "audio/fluency_02.mp3", options: ["Levando tudo em consideração", "Por outro lado", "No início do projeto"], answer: 0, explanation: "'Taking everything into account' introduz uma conclusão ponderada." },
+                { type: "multiple", mode: "listening", question: "Ouça a expressão de concordância parcial:", audioFile: "audio/fluency_03.mp3", options: ["Concordo com você até certo ponto", "Discordo totalmente", "Não entendi sua fala"], answer: 0, explanation: "Expressão diplomática para concordar parcialmente." },
+                { type: "multiple", mode: "listening", question: "Ouça a expressão usada para simplificar uma explicação:", audioFile: "audio/fluency_04.mp3", options: ["Para simplificar", "Pelo contrário", "Na verdade"], answer: 0, explanation: "'To put it simply' serve para resumir ideias complexas." },
+                { type: "multiple", mode: "listening", question: "Ouça a frase polida para discordar suavemente:", audioFile: "audio/fluency_05.mp3", options: ["Entendo o seu ponto, porém", "Você está totalmente errado", "Vamos encerrar a reunião"], answer: 0, explanation: "'I see your point, however' suaviza uma contraposição." },
+                { type: "multiple", mode: "reading", question: "Qual conector expressa contraste suave?", options: ["However", "Because", "For example"], answer: 0, explanation: "'However' realiza transição entre ideias opostas." },
+                { type: "multiple", mode: "reading", question: "Qual frase é ideal para pedir esclarecimento em conversas técnicas?", options: ["Could you elaborate on that point?", "Stop talking right now", "I don't care about this"], answer: 0, explanation: "Forma cortês de solicitar mais detalhes." },
+                { type: "write", mode: "writing", question: "Digite a expressão para 'Do meu ponto de vista' (From my...):", answer: "From my point of view", explanation: "Expressão utilizada para expressar pontos de vista pessoais." },
+                { type: "write", mode: "writing", question: "Digite o conector em inglês para 'Em resumo' (In...):", answer: "In summary", explanation: "'In summary' sintetiza o conteúdo abordado." }
+            ],
+            en: [
+                { type: "multiple", mode: "listening", question: "Listen to the phrase used to add another point:", audioFile: "audio/fluency_01.mp3", options: ["In addition to that", "Therefore", "On the other hand"], answer: 0, explanation: "Adds supplementary information." },
+                { type: "multiple", mode: "listening", question: "Listen to the phrase for concluding a argument:", audioFile: "audio/fluency_02.mp3", options: ["Taking everything into account", "By the way", "On the contrary"], answer: 0, explanation: "Summarizes all considerations before concluding." },
+                { type: "multiple", mode: "listening", question: "Listen to the phrase for partial agreement:", audioFile: "audio/fluency_03.mp3", options: ["I agree with you to a certain extent", "I completely disagree", "I don't understand"], answer: 0, explanation: "States agreement with reservations." },
+                { type: "multiple", mode: "listening", question: "Listen to the phrase used to clarify a statement:", audioFile: "audio/fluency_04.mp3", options: ["To put it simply", "On the contrary", "As a matter of fact"], answer: 0, explanation: "Used to simplify complex information." },
+                { type: "multiple", mode: "listening", question: "Listen to the polite disagreement phrase:", audioFile: "audio/fluency_05.mp3", options: ["I see your point, however", "You are completely wrong", "Let us end this call"], answer: 0, explanation: "Softens a contrasting opinion." },
+                { type: "multiple", mode: "reading", question: "Which connector expresses a soft contrast?", options: ["However", "Because", "For example"], answer: 0, explanation: "'However' connects contrasting thoughts." },
+                { type: "write", mode: "writing", question: "Type the expression for 'From my point of...':", answer: "From my point of view", explanation: "Used to state opinions politely." }
+            ]
+        },
+        memory_leak: {
+            pt: [
+                { type: "multiple", mode: "listening", question: "Ouça o termo do problema de alocação de memória:", audioFile: "audio/mem_01.mp3", options: ["Memory Leak", "CPU Spike", "Disk Cleanup"], answer: 0, explanation: "'Memory Leak' é o vazamento gradual de memória RAM." },
+                { type: "multiple", mode: "listening", question: "Ouça o tipo de ponteiro inválido sem referência:", audioFile: "audio/mem_02.mp3", options: ["Dangling Pointer", "Memory Dump", "Null Reference"], answer: 0, explanation: "'Dangling pointer' aponta para um endereço de memória já liberado." },
+                { type: "multiple", mode: "listening", question: "Ouça o termo para análise de memória Heap:", audioFile: "audio/mem_03.mp3", options: ["Heap Memory Analysis", "Network Scan", "Disk Formatting"], answer: 0, explanation: "Inspecção da área Heap para identificar vazamentos." },
+                { type: "multiple", mode: "listening", question: "Ouça o termo para o arquivo de foto instantânea da memória:", audioFile: "audio/mem_04.mp3", options: ["Heap Dump", "Stack Trace", "Log File"], answer: 0, explanation: "Um Heap Dump captura o estado exato dos objetos na RAM." },
+                { type: "multiple", mode: "listening", question: "Ouça o problema de referência circular que impede a limpeza:", audioFile: "audio/mem_05.mp3", options: ["Circular Reference", "Database Query", "Syntax Error"], answer: 0, explanation: "Referências circulares impedem que o Garbage Collector libere os objetos." },
+                { type: "multiple", mode: "reading", question: "O que causa um 'Memory Leak'?", options: ["Memória alocada sem desalocação", "Conexão de rede lenta", "Muitas imagens"], answer: 0, explanation: "Ocorre quando a memória é reservada mas nunca devolvida ao sistema." },
+                { type: "multiple", mode: "reading", question: "A área da memória para alocações dinâmicas é a:", options: ["Heap", "Stack", "Register"], answer: 0, explanation: "Objetos alocados dinamicamente residem na Heap." },
+                { type: "write", mode: "writing", question: "Digite o termo em inglês para 'Vazamento de Memória':", answer: "Memory Leak", explanation: "Memory Leak é o termo correto em inglês." },
+                { type: "write", mode: "writing", question: "Digite a área de memória para alocação estática/local:", answer: "Stack", explanation: "Stack gerencia chamadas de função e variáveis locais." }
+            ],
+            en: [
+                { type: "multiple", mode: "listening", question: "Listen to the memory allocation issue term:", audioFile: "audio/mem_01.mp3", options: ["Memory Leak", "CPU Spike", "Disk Cleanup"], answer: 0, explanation: "'Memory Leak' depletes RAM over time." },
+                { type: "multiple", mode: "listening", question: "Listen to the invalid pointer term:", audioFile: "audio/mem_02.mp3", options: ["Dangling Pointer", "Memory Dump", "Null Reference"], answer: 0, explanation: "Points to memory that has already been deallocated." },
+                { type: "multiple", mode: "listening", question: "Listen to the RAM diagnosis process:", audioFile: "audio/mem_03.mp3", options: ["Heap Memory Analysis", "Network Scan", "Disk Formatting"], answer: 0, explanation: "Analyzes the heap memory allocation graph." },
+                { type: "multiple", mode: "listening", question: "Listen to the memory snapshot term:", audioFile: "audio/mem_04.mp3", options: ["Heap Dump", "Stack Trace", "Log File"], answer: 0, explanation: "A heap dump snapshot captures active RAM state." },
+                { type: "multiple", mode: "listening", question: "Listen to the cause of unmanaged retained memory:", audioFile: "audio/mem_05.mp3", options: ["Circular Reference", "Database Query", "Syntax Error"], answer: 0, explanation: "Circular references prevent garbage collection." },
+                { type: "multiple", mode: "reading", question: "What causes a 'Memory Leak'?", options: ["Allocated memory that is never freed", "Slow internet connection", "Too many local files"], answer: 0, explanation: "Occurs when unused objects stay in memory." },
+                { type: "write", mode: "writing", question: "Type the English term for 'Vazamento de Memória':", answer: "Memory Leak", explanation: "Exact technical term." }
+            ]
+        },
+        interviews: {
+            pt: [
+                { type: "multiple", mode: "listening", question: "Ouça a pergunta comum do entrevistador sobre carreira:", audioFile: "audio/interviews_01.mp3", options: ["Quais são seus objetivos de carreira?", "Qual sua pretensão salarial?", "Onde você mora?"], answer: 0, explanation: "'What are your career objectives?' busca compreender as metas do candidato." },
+                { type: "multiple", mode: "listening", question: "Ouça o termo sobre expectativa salarial:", audioFile: "audio/interviews_02.mp3", options: ["Salary Expectation", "Job Promotion", "Work Shift"], answer: 0, explanation: "'Salary Expectation' refere-se à pretensão salarial." },
+                { type: "multiple", mode: "listening", question: "Ouça a pergunta sobre gerenciamento de estresse:", audioFile: "audio/interviews_03.mp3", options: ["Como você lida com situações de estresse?", "Qual é a sua formação universitária?", "Você tem disponibilidade para viajar?"], answer: 0, explanation: "Avalia a inteligência emocional sob pressão." },
+                { type: "multiple", mode: "listening", question: "Ouça o termo para o benefício corporativo de saúde:", audioFile: "audio/interviews_04.mp3", options: ["Health Insurance", "Overtime Work", "Notice Period"], answer: 0, explanation: "'Health Insurance' é o plano de saúde oferecido pela empresa." },
+                { type: "multiple", mode: "listening", question: "Ouça a pergunta clássica de avaliação do candidato:", audioFile: "audio/interviews_05.mp3", options: ["Por que devemos contratar você?", "Onde fica o seu escritório?", "Qual é o tamanho da equipe?"], answer: 0, explanation: "'Why should we hire you?' solicita que o candidato apresente seus diferenciais." },
+                { type: "multiple", mode: "reading", question: "O termo 'Relevant Experience' refere-se a:", options: ["Experiência prévia ligada ao cargo", "Hobbies de lazer", "Notas acadêmicas"], answer: 0, explanation: "Histórico profissional diretamente aplicável à vaga." },
+                { type: "write", mode: "writing", question: "Digite a palavra em inglês para 'Entrevista':", answer: "Interview", explanation: "Interview é a reunião de seleção profissional." },
+                { type: "write", mode: "writing", question: "Digite o termo em inglês para 'Trabalho Remoto' (R...):", answer: "Remote Work", explanation: "Remote Work é a modalidade de trabalho à distância." }
+            ],
+            en: [
+                { type: "multiple", mode: "listening", question: "Listen to the common interview question:", audioFile: "audio/interviews_01.mp3", options: ["What are your career objectives?", "What is your salary expectation?", "Where do you live?"], answer: 0, explanation: "Evaluates long-term career goals." },
+                { type: "multiple", mode: "listening", question: "Listen to the financial compensation term:", audioFile: "audio/interviews_02.mp3", options: ["Salary Expectation", "Job Promotion", "Work Shift"], answer: 0, explanation: "Expected pay grade." },
+                { type: "multiple", mode: "listening", question: "Listen to the stress-management question:", audioFile: "audio/interviews_03.mp3", options: ["How do you handle stressful situations?", "What is your educational degree?", "Can you travel?"], answer: 0, explanation: "Evaluates emotional composure under pressure." },
+                { type: "multiple", mode: "listening", question: "Listen to the job perk term:", audioFile: "audio/interviews_04.mp3", options: ["Health Insurance", "Overtime Work", "Notice Period"], answer: 0, explanation: "Common benefit offered by employers." },
+                { type: "multiple", mode: "listening", question: "Listen to the candidate pitch question:", audioFile: "audio/interviews_05.mp3", options: ["Why should we hire you?", "Where is your office?", "What is the team size?"], answer: 0, explanation: "Asks candidate to pitch their value." },
+                { type: "multiple", mode: "reading", question: "The term 'Relevant Experience' refers to:", options: ["Past job roles matching the vacancy", "Personal hobbies", "University grades"], answer: 0, explanation: "Directly applicable job background." },
+                { type: "write", mode: "writing", question: "Type the English word for 'Entrevista':", answer: "Interview", explanation: "Interview is the hiring assessment." }
+            ]
+        },
+        tech_english: {
+            pt: [
+                { type: "multiple", mode: "listening", question: "Ouça o termo sobre documentação técnica do sistema:", audioFile: "audio/tech_01.mp3", options: ["Technical Documentation", "User Feedback", "Design Pattern"], answer: 0, explanation: "'Technical Documentation' engloba as especificações do sistema." },
+                { type: "multiple", mode: "listening", question: "Ouça o termo sobre sistema de controle de versão:", audioFile: "audio/tech_02.mp3", options: ["Version Control System", "Operating System", "File System"], answer: 0, explanation: "'Version Control System' (ex: Git) rastreia o histórico do código." },
+                { type: "multiple", mode: "listening", question: "Ouça a ação de baixar dependências do projeto:", audioFile: "audio/tech_03.mp3", options: ["Fetch dependencies", "Delete repository", "Build failure"], answer: 0, explanation: "'Fetch dependencies' obtém pacotes externos necessários." },
+                { type: "multiple", mode: "listening", question: "Ouça a mensagem de sucesso de compilação:", audioFile: "audio/tech_04.mp3", options: ["Build Succeeded", "Syntax Error", "Merge Conflict"], answer: 0, explanation: "'Build Succeeded' indica compilação concluída sem erros." },
+                { type: "multiple", mode: "listening", question: "Ouça o nome do ambiente de testes pré-produção:", audioFile: "audio/tech_05.mp3", options: ["Staging Environment", "Local Machine", "Production Server"], answer: 0, explanation: "'Staging Environment' replica o ambiente de produção para testes." },
+                { type: "multiple", mode: "reading", question: "O arquivo 'README.md' serve para:", options: ["Instruções iniciais e documentação do repositório", "Salvar senhas de acesso", "Executar o código no servidor"], answer: 0, explanation: "Guia introdutório para o desenvolvimento do projeto." },
+                { type: "write", mode: "writing", question: "Digite em inglês o termo para 'Repositório':", answer: "Repository", explanation: "Repository armazena a base de código do projeto." },
+                { type: "write", mode: "writing", question: "Digite em inglês a palavra para 'Publicação / Implantação':", answer: "Deployment", explanation: "Deployment coloca a aplicação em execução no ambiente final." }
+            ],
+            en: [
+                { type: "multiple", mode: "listening", question: "Listen to the phrase for system manuals:", audioFile: "audio/tech_01.mp3", options: ["Technical Documentation", "User Feedback", "Design Pattern"], answer: 0, explanation: "Refers to software specifications." },
+                { type: "multiple", mode: "listening", question: "Listen to the version tracking term:", audioFile: "audio/tech_02.mp3", options: ["Version Control System", "Operating System", "File System"], answer: 0, explanation: "Tracks code modification history." },
+                { type: "multiple", mode: "listening", question: "Listen to the dependency action phrase:", audioFile: "audio/tech_03.mp3", options: ["Fetch dependencies", "Delete repository", "Build failure"], answer: 0, explanation: "Downloads third-party project packages." },
+                { type: "multiple", mode: "listening", question: "Listen to the build status term:", audioFile: "audio/tech_04.mp3", options: ["Build Succeeded", "Syntax Error", "Merge Conflict"], answer: 0, explanation: "Indicates successful code compilation." },
+                { type: "multiple", mode: "listening", question: "Listen to the pre-production environment term:", audioFile: "audio/tech_05.mp3", options: ["Staging Environment", "Local Machine", "Production Server"], answer: 0, explanation: "Testing environment before production release." },
+                { type: "multiple", mode: "reading", question: "The 'README.md' file is used to:", options: ["Provide initial repository guidelines", "Store passwords", "Run code in browser"], answer: 0, explanation: "Introductory documentation file." },
+                { type: "write", mode: "writing", question: "Type the English term for 'Documentação':", answer: "Documentation", explanation: "Provides guide for code usage." }
+            ]
+        },
+        coding: {
+            pt: [
+                { type: "multiple", mode: "listening", question: "Ouça a ação de reorganizar a estrutura do código:", audioFile: "audio/coding_01.mp3", options: ["Refactor the code", "Deletar o projeto", "Formatar disco"], answer: 0, explanation: "'Refactor the code' melhora o design do código mantendo seu resultado." },
+                { type: "multiple", mode: "listening", question: "Ouça o termo para instrução condicional:", audioFile: "audio/coding_02.mp3", options: ["Conditional Statement", "Infinite Loop", "Class Inheritance"], answer: 0, explanation: "Estruturas condicionais do tipo IF / ELSE." },
+                { type: "multiple", mode: "listening", question: "Ouça o termo sobre limite de acessibilidade de variáveis:", audioFile: "audio/coding_03.mp3", options: ["Variable Scope", "Data Encryption", "Network Protocol"], answer: 0, explanation: "Define o contexto de visibilidade de uma variável." },
+                { type: "multiple", mode: "listening", question: "Ouça o conceito de Herança em Orientação a Objetos:", audioFile: "audio/coding_04.mp3", options: ["Class Inheritance", "Database Query", "Memory Leak"], answer: 0, explanation: "Mecanismo pelo qual uma classe deriva membros de outra." },
+                { type: "multiple", mode: "listening", question: "Ouça a estrutura de dados em árvore de busca:", audioFile: "audio/coding_05.mp3", options: ["Binary Search Tree", "Linear Array", "String Concatenation"], answer: 0, explanation: "Estrutura hierárquica baseada em nós ordenados." },
+                { type: "multiple", mode: "reading", question: "O que é um 'Algoritmo'?", options: ["Sequência finita de passos para resolver um problema", "Um modelo de monitor", "Linguagem de banco de dados"], answer: 0, explanation: "Conjunto ordenado de instruções de processamento." },
+                { type: "write", mode: "writing", question: "Digite a palavra em inglês para 'Algoritmo':", answer: "Algorithm", explanation: "Grafia correta em inglês." },
+                { type: "write", mode: "writing", question: "Digite em inglês o termo para 'Compilador':", answer: "Compiler", explanation: "Compiler traduz código fonte em código de máquina." }
+            ],
+            en: [
+                { type: "multiple", mode: "listening", question: "Listen to the action of cleaning code structure:", audioFile: "audio/coding_01.mp3", options: ["Refactor the code", "Delete the project", "Format drive"], answer: 0, explanation: "Refactoring improves internal structure without altering behavior." },
+                { type: "multiple", mode: "listening", question: "Listen to the control structure term:", audioFile: "audio/coding_02.mp3", options: ["Conditional Statement", "Infinite Loop", "Class Inheritance"], answer: 0, explanation: "Executes statements based on boolean evaluations." },
+                { type: "multiple", mode: "listening", question: "Listen to the variable visibility term:", audioFile: "audio/coding_03.mp3", options: ["Variable Scope", "Data Encryption", "Network Protocol"], answer: 0, explanation: "Defines accessibility region of a variable." },
+                { type: "multiple", mode: "listening", question: "Listen to the Object-Oriented concept:", audioFile: "audio/coding_04.mp3", options: ["Class Inheritance", "Database Query", "Memory Leak"], answer: 0, explanation: "Derived class inheriting properties from base class." },
+                { type: "multiple", mode: "listening", question: "Listen to the tree data structure term:", audioFile: "audio/coding_05.mp3", options: ["Binary Search Tree", "Linear Array", "String Concatenation"], answer: 0, explanation: "Hierarchical data structure with ordered node pointers." },
+                { type: "multiple", mode: "reading", question: "What is an 'Algorithm'?", options: ["Finite step-by-step logic to solve a problem", "Monitor model", "Database syntax"], answer: 0, explanation: "Ordered set of operational rules." },
+                { type: "write", mode: "writing", question: "Type the English word for 'Escopo' (S...):", answer: "Scope", explanation: "Scope bounds variable accessibility." }
+            ]
+        },
+        meetings: {
+            pt: [
+                { type: "multiple", mode: "listening", question: "Ouça o termo da reunião rápida diária de alinhamento:", audioFile: "audio/meetings_01.mp3", options: ["Daily Standup Meeting", "Quarterly Review", "Client Dinner"], answer: 0, explanation: "'Daily Standup Meeting' é a sincronização rápida diária da equipe." },
+                { type: "multiple", mode: "listening", question: "Ouça a solicitação de atualização do projeto:", audioFile: "audio/meetings_02.mp3", options: ["Status Update", "Project Cancelled", "Budget Reduction"], answer: 0, explanation: "'Status Update' relata o progresso das tarefas." },
+                { type: "multiple", mode: "listening", question: "Ouça a reunião de avaliação da sprint finalizada:", audioFile: "audio/meetings_03.mp3", options: ["Sprint Retrospective", "Code Compilation", "Network Diagnostic"], answer: 0, explanation: "Reunião para analisar melhorias no processo de trabalho." },
+                { type: "multiple", mode: "listening", question: "Ouça o termo para tarefa prática derivada da reunião:", audioFile: "audio/meetings_04.mp3", options: ["Action Item", "Idle Time", "Code Snippet"], answer: 0, explanation: "Tarefa atribuída a um membro com prazo definido." },
+                { type: "multiple", mode: "listening", question: "Ouça a expressão para adiar um tópico da discussão:", audioFile: "audio/meetings_05.mp3", options: ["Table this discussion for later", "Finish the project now", "Approve budget immediately"], answer: 0, explanation: "Adia a pauta para manter a reunião no tempo previsto." },
+                { type: "multiple", mode: "reading", question: "O termo 'Deadline' representa:", options: ["Prazo limite para entregar a tarefa", "Horário de almoço", "Linha do código"], answer: 0, explanation: "Data final limite de entrega." },
+                { type: "write", mode: "writing", question: "Digite em inglês a palavra para 'Pauta da Reunião' (A...):", answer: "Agenda", explanation: "Agenda define a ordem dos tópicos a discutir." },
+                { type: "write", mode: "writing", question: "Digite em inglês a palavra para 'Feedback / Retorno':", answer: "Feedback", explanation: "Feedback fornece avaliações construtivas." }
+            ],
+            en: [
+                { type: "multiple", mode: "listening", question: "Listen to the daily agile sync meeting term:", audioFile: "audio/meetings_01.mp3", options: ["Daily Standup Meeting", "Quarterly Review", "Client Dinner"], answer: 0, explanation: "Short daily team sync." },
+                { type: "multiple", mode: "listening", question: "Listen to the progress report phrase:", audioFile: "audio/meetings_02.mp3", options: ["Status Update", "Project Cancelled", "Budget Reduction"], answer: 0, explanation: "Brief report on project progress." },
+                { type: "multiple", mode: "listening", question: "Listen to the agile cycle review meeting:", audioFile: "audio/meetings_03.mp3", options: ["Sprint Retrospective", "Code Compilation", "Network Diagnostic"], answer: 0, explanation: "Meeting to inspect sprint process improvements." },
+                { type: "multiple", mode: "listening", question: "Listen to the meeting task assignment term:", audioFile: "audio/meetings_04.mp3", options: ["Action Item", "Idle Time", "Code Snippet"], answer: 0, explanation: "Concrete task assigned to an owner." },
+                { type: "multiple", mode: "listening", question: "Listen to the topic postponement phrase:", audioFile: "audio/meetings_05.mp3", options: ["Table this discussion for later", "Finish the project now", "Approve the budget immediately"], answer: 0, explanation: "Postpones discussion to keep on schedule." },
+                { type: "multiple", mode: "reading", question: "The term 'Deadline' means:", options: ["Final due date for a task", "Lunch break time", "Code line number"], answer: 0, explanation: "Time limit for completing a task." },
+                { type: "write", mode: "writing", question: "Type the noun for meeting agenda topics (A...):", answer: "Agenda", explanation: "Agenda defines topic sequence." }
+            ]
+        },
+        sql: {
+            pt: [
+                { type: "multiple", mode: "listening", question: "Ouça o comando SQL de consulta de tabela:", audioFile: "audio/sql_01.mp3", options: ["SELECT ALL FROM USERS", "DROP DATABASE USERS", "UPDATE USERS SET"], answer: 0, explanation: "Comando para recuperar registros da tabela USERS." },
+                { type: "multiple", mode: "listening", question: "Ouça o comando seguro de exclusão de tabela:", audioFile: "audio/sql_02.mp3", options: ["DROP TABLE IF EXISTS", "SELECT FROM TABLE", "CREATE INDEX"], answer: 0, explanation: "Remove a tabela somente caso ela exista no banco." },
+                { type: "multiple", mode: "listening", question: "Ouça o tipo de junção que inclui toda a tabela esquerda:", audioFile: "audio/sql_03.mp3", options: ["LEFT JOIN", "RIGHT JOIN", "CROSS JOIN"], answer: 0, explanation: "LEFT JOIN inclui todos os registros da tabela da esquerda." },
+                { type: "multiple", mode: "listening", question: "Ouça a função agregada que conta valores distintos:", audioFile: "audio/sql_04.mp3", options: ["COUNT DISTINCT", "DROP DATABASE", "ALTER TABLE"], answer: 0, explanation: "COUNT DISTINCT calcula o número de valores únicos em uma coluna." },
+                { type: "multiple", mode: "listening", question: "Ouça a restrição que impede valores nulos na coluna:", audioFile: "audio/sql_05.mp3", options: ["NOT NULL CONSTRAINT", "PRIMARY KEY", "FOREIGN KEY"], answer: 0, explanation: "Garante que a coluna não possa armazenar registros nulos." },
+                { type: "multiple", mode: "reading", question: "Qual cláusula é usada para filtrar dados em SQL?", options: ["WHERE", "GROUP BY", "ORDER BY"], answer: 0, explanation: "WHERE estabelece condições de filtro de dados." },
+                { type: "write", mode: "writing", question: "Digite a sigla para 'Structured Query Language':", answer: "SQL", explanation: "SQL é a linguagem padrão de consulta em bancos de dados relacionais." },
+                { type: "write", mode: "writing", question: "Digite a cláusula SQL usada para agrupar registros (G...):", answer: "GROUP BY", explanation: "GROUP BY agrupa dados para funções agregadas." }
+            ],
+            en: [
+                { type: "multiple", mode: "listening", question: "Listen to the query SQL command:", audioFile: "audio/sql_01.mp3", options: ["SELECT ALL FROM USERS", "DROP DATABASE USERS", "UPDATE USERS SET"], answer: 0, explanation: "Fetches table data records." },
+                { type: "multiple", mode: "listening", question: "Listen to the safe table deletion statement:", audioFile: "audio/sql_02.mp3", options: ["DROP TABLE IF EXISTS", "SELECT FROM TABLE", "CREATE INDEX"], answer: 0, explanation: "Drops table safely if existing." },
+                { type: "multiple", mode: "listening", question: "Listen to the left table preservation join:", audioFile: "audio/sql_03.mp3", options: ["LEFT JOIN", "RIGHT JOIN", "CROSS JOIN"], answer: 0, explanation: "Preserves all rows from left table." },
+                { type: "multiple", mode: "listening", question: "Listen to the aggregate SQL function:", audioFile: "audio/sql_04.mp3", options: ["COUNT DISTINCT", "DROP DATABASE", "ALTER TABLE"], answer: 0, explanation: "Counts unique non-null values." },
+                { type: "multiple", mode: "listening", question: "Listen to the column null constraint term:", audioFile: "audio/sql_05.mp3", options: ["NOT NULL CONSTRAINT", "PRIMARY KEY", "FOREIGN KEY"], answer: 0, explanation: "Ensures column cannot store null entries." },
+                { type: "multiple", mode: "reading", question: "Which SQL clause is used to filter records?", options: ["WHERE", "GROUP BY", "ORDER BY"], answer: 0, explanation: "WHERE filters query results based on conditions." },
+                { type: "write", mode: "writing", question: "Type the acronym for 'Structured Query Language':", answer: "SQL", explanation: "Database language standard." }
+            ]
+        },
+        api: {
+            pt: [
+                { type: "multiple", mode: "listening", question: "Ouça o método HTTP de requisição de dados:", audioFile: "audio/api_01.mp3", options: ["GET Request", "POST Request", "DELETE Request"], answer: 0, explanation: "'GET Request' busca dados sem modificar recursos." },
+                { type: "multiple", mode: "listening", question: "Ouça o código de erro interno do servidor:", audioFile: "audio/api_02.mp3", options: ["500 Internal Server Error", "200 OK", "404 Not Found"], answer: 0, explanation: "Indica erro não esperado no processamento do servidor." },
+                { type: "multiple", mode: "listening", question: "Ouça o método HTTP para remover recursos:", audioFile: "audio/api_03.mp3", options: ["DELETE Request", "PATCH Request", "POST Request"], answer: 0, explanation: "'DELETE Request' remove o recurso especificado na API." },
+                { type: "multiple", mode: "listening", question: "Ouça o código de resposta de acesso proibido:", audioFile: "audio/api_04.mp3", options: ["403 Forbidden", "201 Created", "301 Moved Permanently"], answer: 0, explanation: "403 indica requisição recusada por falta de permissão." },
+                { type: "multiple", mode: "listening", question: "Ouça o método HTTP para atualização parcial de recurso:", audioFile: "audio/api_05.mp3", options: ["PATCH Request", "PUT Request", "POST Request"], answer: 0, explanation: "'PATCH Request' aplica modificações parciais no recurso." },
+                { type: "multiple", mode: "reading", question: "O formato 'JSON' é utilizado por ser:", options: ["Formato leve de troca de dados legível por humanos e sistemas", "Arquivo de formato de áudio", "Arquivo comprimido ZIP"], answer: 0, explanation: "JSON é o padrão leve de representação de dados via API." },
+                { type: "write", mode: "writing", question: "Digite a sigla para 'Application Programming Interface':", answer: "API", explanation: "API é a sigla oficial." },
+                { type: "write", mode: "writing", question: "Digite em inglês o termo para 'Ponto de Acesso' de uma API:", answer: "Endpoint", explanation: "Endpoint é o endereço URL acessado pelo cliente." }
+            ],
+            en: [
+                { type: "multiple", mode: "listening", question: "Listen to the data fetching HTTP method:", audioFile: "audio/api_01.mp3", options: ["GET Request", "POST Request", "DELETE Request"], answer: 0, explanation: "GET retrieves resource data." },
+                { type: "multiple", mode: "listening", question: "Listen to the server error status code:", audioFile: "audio/api_02.mp3", options: ["500 Internal Server Error", "200 OK", "404 Not Found"], answer: 0, explanation: "Server encountered an unhandled condition." },
+                { type: "multiple", mode: "listening", question: "Listen to the resource removal HTTP method:", audioFile: "audio/api_03.mp3", options: ["DELETE Request", "PATCH Request", "POST Request"], answer: 0, explanation: "Deletes specified resource." },
+                { type: "multiple", mode: "listening", question: "Listen to the authorization refusal status:", audioFile: "audio/api_04.mp3", options: ["403 Forbidden", "201 Created", "301 Moved Permanently"], answer: 0, explanation: "Server understands request but refuses access." },
+                { type: "multiple", mode: "listening", question: "Listen to the partial update HTTP method:", audioFile: "audio/api_05.mp3", options: ["PATCH Request", "PUT Request", "POST Request"], answer: 0, explanation: "Applies partial modifications to a resource." },
+                { type: "multiple", mode: "reading", question: "The 'JSON' format is widely adopted because it is:", options: ["Lightweight and machine-readable text", "Audio format", "Image file"], answer: 0, explanation: "Standard data exchange format." },
+                { type: "write", mode: "writing", question: "Type the acronym for 'Application Programming Interface':", answer: "API", explanation: "Official acronym." }
+            ]
+        }
+            },
+            /* 20 QUESTÕES DE RECARGA DE HP (MISTURANDO TI E INGLÊS TÉCNICO) */
+            recharge: [
+                {
+                    text: "APIs allow different software systems to communicate. When a client makes a Request, the server processes it and returns a Response formatted in JSON format.",
+                    question: "1. Qual formato de dados é comumente retornado pelo servidor em uma requisição de API?",
+                    options: ["HTML", "JSON", "MP3"],
+                    answer: 1,
+                    explanation: "O formato JSON é o padrão de resposta da maioria das APIs REST modernas."
+                },
+                {
+                    text: "Version Control Systems like Git track code history. A 'Commit' saves changes locally, while a 'Push' command sends those changes to a remote repository like GitHub.",
+                    question: "2. Qual comando envia as alterações salvas do seu computador local para o repositório remoto?",
+                    options: ["Commit", "Pull", "Push"],
+                    answer: 2,
+                    explanation: "O comando 'Push' envia os commits do repositório local para o remoto (GitHub)."
+                },
+                {
+                    text: "A memory leak occurs when an application allocates memory on the Heap but fails to release it back to the operating system after the object is no longer needed.",
+                    question: "3. Onde a memória é alocada quando ocorre o vazamento citado no texto?",
+                    options: ["Na memória Heap", "No HD local", "No teclado"],
+                    answer: 0,
+                    explanation: "Alocações dinâmicas de memória de longa duração ocorrem na área Heap."
+                },
+                {
+                    text: "Continuous Integration (CI) is a software development practice where developers frequently merge their code changes into a central repository to run automated builds and tests.",
+                    question: "4. Qual é o objetivo principal do Continuous Integration (CI)?",
+                    options: ["Mesclar códigos com frequência e rodar testes automáticos", "Deletar bancos de dados antigos", "Vender licenças de software"],
+                    answer: 0,
+                    explanation: "CI foca no merge constante de código e testes automatizados de integração."
+                },
+                {
+                    text: "Docker containers wrap up software and its dependencies into a standardized unit for development. Unlike virtual machines, containers share the host machine system kernel.",
+                    question: "5. O que os containers Docker compartilham com a máquina hospedeira em comparação a VMs?",
+                    options: ["O Kernel do sistema operacional", "A placa de som", "A senha do Wi-Fi"],
+                    answer: 0,
+                    explanation: "Containers são mais leves porque compartilham o Kernel do SO hospedeiro."
+                },
+                {
+                    text: "The HTTP 404 Not Found response status code indicates that the server cannot find the requested resource or URL.",
+                    question: "6. O que significa quando um servidor retorna o código HTTP 404?",
+                    options: ["Sucesso na operação", "O recurso ou página solicitada não foi encontrada", "Erro interno do servidor"],
+                    answer: 1,
+                    explanation: "404 Not Found representa recurso ou URL ausente no servidor."
+                },
+                {
+                    text: "SQL Databases use Primary Keys to uniquely identify each row in a database table. A Foreign Key is used to link two tables together.",
+                    question: "7. Qual tipo de chave é utilizada para conectar/relacionar duas tabelas em um banco de dados?",
+                    options: ["Primary Key", "Foreign Key", "Master Key"],
+                    answer: 1,
+                    explanation: "A Foreign Key (Chave Estrangeira) faz a ponte entre tabelas relacionais."
+                },
+                {
+                    text: "In Agile methodology, a Daily Standup is a short 15-minute meeting for the development team to synchronize activities and identify blockers.",
+                    question: "8. Qual é a duração recomendada e foco de uma reunião Daily Standup?",
+                    options: ["15 minutos para sincronizar atividades e identificar bloqueios", "2 horas para ensinar programação", "1 dia inteiro para planejar o ano"],
+                    answer: 0,
+                    explanation: "Daily Standup é uma reunião ágil rápida de 15 min para alinhamento."
+                },
+                {
+                    text: "Refactoring consists of updating existing computer code without changing its external behavior, aiming to improve readability and reduce complexity.",
+                    question: "9. O que busca a prática de refatoração (Refactoring)?",
+                    options: ["Mudar as regras de negócio", "Melhorar a legibilidade do código sem alterar seu resultado externo", "Apagar o projeto inteiro"],
+                    answer: 1,
+                    explanation: "Refatorar melhora a estrutura interna do código sem alterar sua saída."
+                },
+                {
+                    text: "An API Endpoint is a specific URL location where a server receives requests for resources or data from a client application.",
+                    question: "10. O que define o conceito de 'API Endpoint'?",
+                    options: ["A URL específica onde a API recebe requisições de dados", "O cabo de rede do servidor", "A tela inicial do sistema"],
+                    answer: 0,
+                    explanation: "Endpoint é a URL exata exposta para receber requisições HTTP."
+                },
+                {
+                    text: "Asynchronous programming allows the system to perform a task without blocking the execution of subsequent code instructions while waiting for a response.",
+                    question: "11. Qual a principal vantagem da programação assíncrona (Asynchronous)?",
+                    options: ["Executar tarefas sem travar o código enquanto espera a resposta", "Desligar o computador mais rápido", "Impedir que o usuário digite no teclado"],
+                    answer: 0,
+                    explanation: "Código assíncrono não bloqueia a thread principal enquanto aguarda I/O."
+                },
+                {
+                    text: "Garbage Collection is an automatic memory management feature that frees up memory occupied by objects that are no longer referenced by the application.",
+                    question: "12. Qual é a função do Garbage Collector em linguagens como Java ou C#?",
+                    options: ["Liberar memória de objetos que não estão mais sendo usados", "Limpar a poeira das peças do computador", "Formatar o disco rígido"],
+                    answer: 0,
+                    explanation: "O Garbage Collector identifica e desaloca objetos sem referência na RAM."
+                },
+                {
+                    text: "Object-Oriented Programming (OOP) relies on concepts like Encapsulation, Inheritance, Polymorphism, and Abstraction to structure code into reusable blueprints.",
+                    question: "13. Qual destes é um dos pilares fundamentais da Programação Orientada a Objetos (POO)?",
+                    options: ["Inheritance (Herança)", "HTML Styling", "SQL Querying"],
+                    answer: 0,
+                    explanation: "Herança (Inheritance) é um dos 4 pilares centrais da POO."
+                },
+                {
+                    text: "Cross-Origin Resource Sharing (CORS) is a browser security mechanism that restricts web applications from making requests to a different domain than the one serving the app.",
+                    question: "14. O mecanismo de segurança CORS previne que requisições ocorram entre quais origens?",
+                    options: ["Domínios/URLs diferentes sem autorização prévia", "Duas pastas do mesmo computador", "Teclas do teclado do desenvolvedor"],
+                    answer: 0,
+                    explanation: "CORS bloqueia requisições feitas a domínios de origens distintas por padrão."
+                },
+                {
+                    text: "The main function of a Load Balancer is to distribute incoming network traffic across multiple servers to prevent any single server from becoming overwhelmed.",
+                    question: "15. Para que serve um Load Balancer na infraestrutura?",
+                    options: ["Distribuir o tráfego de rede entre vários servidores", "Aumentar a resolução dos monitores", "Imprimir relatórios de erro"],
+                    answer: 0,
+                    explanation: "Garante alta disponibilidade ao balancear a carga de acessos."
+                },
+                {
+                    text: "In job interviews, 'Soft Skills' refer to interpersonal attributes and communication abilities, while 'Hard Skills' represent technical technical expertise.",
+                    question: "16. Como são classificadas as habilidades técnicas e mensuráveis em uma entrevista?",
+                    options: ["Soft Skills", "Hard Skills", "Life Skills"],
+                    answer: 1,
+                    explanation: "Hard Skills representam conhecimentos técnicos aprendidos como linguagens e bancos."
+                },
+                {
+                    text: "Environment variables (.env files) are used to store sensitive data like API keys and database credentials outside of the project source code.",
+                    question: "17. O que deve ser armazenado em variáveis de ambiente (.env)?",
+                    options: ["Dados sensíveis como chaves de API e credenciais de banco", "Cores e fontes da página", "Imagens do logo da empresa"],
+                    answer: 0,
+                    explanation: "Variáveis de ambiente isolam credenciais e chaves secretas fora do código."
+                },
+                {
+                    text: "A pull request (PR) in Git allows developers to notify team members about changes they have pushed to a repository branch, inviting code review before merging.",
+                    question: "18. Qual o objetivo de abrir um Pull Request (PR)?",
+                    options: ["Solicitar a revisão de código antes de mesclar as alterações", "Excluir um projeto do GitHub", "Baixar um arquivo MP3"],
+                    answer: 0,
+                    explanation: "PRs convidam a equipe para revisar o código antes de integrá-lo à branch principal."
+                },
+                {
+                    text: "The HTTP 500 Internal Server Error status code indicates that the server encountered an unexpected condition that prevented it from fulfilling the request.",
+                    question: "19. O que o código de erro HTTP 500 indica para o desenvolvedor?",
+                    options: ["Erro genérico interno ocorrido no servidor", "Sucesso na requisição do cliente", "Acesso liberado sem restrições"],
+                    answer: 0,
+                    explanation: "500 representa uma exceção ou falha não tratada no lado do servidor."
+                },
+                {
+                    text: "Unit Testing is a software testing method where individual units or components of a software source code are tested to determine if they are fit for use.",
+                    question: "20. O que é testado durante um Teste Unitário (Unit Testing)?",
+                    options: ["Componentes ou unidades individuais de código isoladamente", "A velocidade da conexão de internet", "A aparência gráfica do site no celular"],
+                    answer: 0,
+                    explanation: "Testes unitários validam o comportamento de menores unidades/funções do código."
+                }
+            ]
+        };
+
+        let selectedArea = 'all';
+        let currentDifficulty = 'easy';
+        let activeMode = 'listening';
+        let currentQuestionIdx = 0;
+        let lives = 3;
+        let score = 0;
+        let questionAnswered = false;
+
+        function init() {
+            const dropdown = document.getElementById('areaDropdown');
+            dropdown.innerHTML = "";
+            db.areas.forEach(area => {
+                const opt = document.createElement('option');
+                opt.value = area.id;
+                opt.innerText = area.name;
+                dropdown.appendChild(opt);
+            });
+            selectedArea = dropdown.value;
+            applyUI();
+        }
+
+        function changeArea() {
+            selectedArea = document.getElementById('areaDropdown').value;
+        }
+
+        function setDifficulty(diff) {
+            currentDifficulty = diff;
+            document.querySelectorAll('.diff-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`btn-${diff}`).classList.add('active');
+            applyUI();
+            if (document.getElementById('questModal').classList.contains('active')) {
+                loadQuestion();
+            }
+        }
+
+        function applyUI() {
+            const t = uiTranslations[currentDifficulty];
+            document.getElementById('nav-home').innerText = t.navHome;
+            document.getElementById('nav-world1').innerText = t.navWorld1;
+            document.getElementById('nav-world2').innerText = t.navWorld2;
+            document.getElementById('nav-bonus').innerText = t.navBonus;
+            document.getElementById('label-diff').innerText = t.labelDiff;
+            document.getElementById('btn-easy').innerText = t.btnEasy;
+            document.getElementById('btn-medium').innerText = t.btnMedium;
+            document.getElementById('btn-hard').innerText = t.btnHard;
+            document.getElementById('txt-page-title').innerText = t.titlePage;
+            document.getElementById('txt-select-topic').innerText = t.selectTopic;
+            document.getElementById('title-list').innerText = t.titleList;
+            document.getElementById('desc-list').innerText = t.descList;
+            document.getElementById('btn-start-list').innerText = t.btnStartList;
+            document.getElementById('title-read').innerText = t.titleRead;
+            document.getElementById('desc-read').innerText = t.descRead;
+            document.getElementById('btn-start-read').innerText = t.btnStartRead;
+            document.getElementById('title-write').innerText = t.titleWrite;
+            document.getElementById('desc-write').innerText = t.descWrite;
+            document.getElementById('btn-start-write').innerText = t.btnStartWrite;
+            document.getElementById('btn-audio').innerText = t.btnAudio;
+            document.getElementById('btnPrev').innerText = t.btnPrev;
+            document.getElementById('btnNext').innerText = t.btnNext;
+            document.getElementById('txt-vic-title').innerText = t.vicTitle;
+            document.getElementById('txt-vic-desc').innerText = t.vicDesc;
+            document.getElementById('lbl-vic-score').innerText = t.vicScore;
+            document.getElementById('btn-vic-retry').innerText = t.btnVicRetry;
+            document.getElementById('btn-vic-exit').innerText = t.btnVicExit;
+        }
+
+        function updateHUD() {
+            let hearts = "";
+            for (let i = 0; i < 3; i++) hearts += i < lives ? "❤️" : "🖤";
+            document.getElementById('modalLives').innerText = `HP: ${hearts}`;
+            document.getElementById('modalScore').innerText = `PTS: ${String(score).padStart(4, '0')}`;
+        }
+
+        function openQuestModal(mode) {
+            activeMode = mode;
+            currentQuestionIdx = 0;
+            lives = 3;
+            document.getElementById('questModal').classList.add('active');
+            document.getElementById('exerciseArea').style.display = 'flex';
+            document.getElementById('rechargeArea').classList.remove('active');
+            document.getElementById('victoryArea').classList.remove('active');
+            updateHUD();
+            loadQuestion();
+        }
+
+        function closeQuestModal() {
+            document.getElementById('questModal').classList.remove('active');
+            if (window.currentAudio) {
+                window.currentAudio.pause();
+                window.currentAudio.currentTime = 0;
+            }
+        }
+
+        function getQuestions() {
+            const langKey = currentDifficulty === 'hard' ? 'en' : 'pt';
+            let rawQuestions = [];
+
+            if (selectedArea === 'all') {
+                Object.keys(db.questions).forEach(areaKey => {
+                    if (db.questions[areaKey][langKey]) {
+                        rawQuestions = rawQuestions.concat(db.questions[areaKey][langKey]);
+                    }
+                });
+            } else {
+                if (db.questions[selectedArea] && db.questions[selectedArea][langKey]) {
+                    rawQuestions = db.questions[selectedArea][langKey];
+                }
+            }
+            return rawQuestions.filter(q => q.mode === activeMode);
+        }
+
+        function loadQuestion() {
+            questionAnswered = false;
+            const questions = getQuestions();
+            const t = uiTranslations[currentDifficulty];
+
+            if (currentQuestionIdx >= questions.length && questions.length > 0) {
+                triggerVictory();
+                return;
+            }
+
+            const q = questions[currentQuestionIdx];
+            const feedbackBox = document.getElementById('feedbackBox');
+            feedbackBox.style.display = "none";
+
+            if (!q) {
+                document.getElementById('questionText').innerText = currentDifficulty === 'hard' ? "No questions found for this mode/topic." : "Nenhuma questão encontrada para este modo/área.";
+                document.getElementById('optionsContainer').innerHTML = "";
+                document.getElementById('audioArea').style.display = "none";
+                return;
+            }
+
+            document.getElementById('questionText').innerText = `[${currentQuestionIdx + 1}/${questions.length}] ${q.question}`;
+            document.getElementById('audioArea').style.display = q.mode === 'listening' ? 'block' : 'none';
+
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = "";
+
+            if (q.type === 'write') {
+                const input = document.createElement('input');
+                input.className = "input-written";
+                input.id = "writeAnswerInput";
+                input.placeholder = currentDifficulty === 'hard' ? "Type answer and press Enter..." : "Digite e pressione Enter...";
+                input.onkeydown = (e) => { if (e.key === 'Enter') checkWrite(q); };
+                
+                const btn = document.createElement('button');
+                btn.className = "start-btn";
+                btn.style.marginTop = "0.5rem";
+                btn.innerText = t.writeBtn;
+                btn.onclick = () => checkWrite(q);
+
+                optionsContainer.appendChild(input);
+                optionsContainer.appendChild(btn);
+            } else {
+                q.options.forEach((opt, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.innerText = `${String.fromCharCode(65 + idx)}) ${opt}`;
+                    btn.onclick = () => checkMultiple(btn, idx, q);
+                    optionsContainer.appendChild(btn);
+                });
+            }
+
+            document.getElementById('btnPrev').disabled = currentQuestionIdx === 0;
+            document.getElementById('btnNext').innerText = currentQuestionIdx === questions.length - 1 ? t.btnFinish : t.btnNext;
+        }
+
+        function playQuestionAudio() {
+            const q = getQuestions()[currentQuestionIdx];
+            
+            if (!q || !q.audioFile) {
+                alert("Erro: Esta questão não possui arquivo de áudio vinculado.");
+                return;
+            }
+
+            if (window.currentAudio) {
+                window.currentAudio.pause();
+                window.currentAudio.currentTime = 0;
+            }
+
+            window.currentAudio = new Audio(q.audioFile);
+            window.currentAudio.play().catch(err => {
+                console.error("Erro ao reproduzir:", q.audioFile, err);
+                alert(`Arquivo não encontrado ou bloqueado: "${q.audioFile}". Certifique-se de que a pasta 'audio/' está no mesmo local deste arquivo HTML.`);
+            });
+        }
+
+        function checkMultiple(btn, idx, q) {
+            if (questionAnswered) return;
+            const feedbackBox = document.getElementById('feedbackBox');
+            if (idx === q.answer) {
+                questionAnswered = true;
+                btn.classList.add('btn-correct');
+                feedbackBox.className = "feedback-box correct";
+                feedbackBox.innerText = `🎯 ${currentDifficulty === 'hard' ? 'CORRECT' : 'CORRETO'}! +100 PTS\n${q.explanation}`;
+                score += 100;
+                if (lives < 3) lives++;
+            } else {
+                btn.classList.add('btn-wrong');
+                btn.disabled = true;
+                feedbackBox.className = "feedback-box wrong";
+                feedbackBox.innerText = `❌ ${currentDifficulty === 'hard' ? 'WRONG' : 'INCORRETO'}! (-1 HP)`;
+                lives--;
+                if (lives <= 0) {
+                    setTimeout(triggerRechargeModal, 1000);
+                }
+            }
+            updateHUD();
+        }
+
+        function checkWrite(q) {
+            if (questionAnswered) return;
+            const val = document.getElementById('writeAnswerInput').value.trim().toLowerCase();
+            const feedbackBox = document.getElementById('feedbackBox');
+            if (val === q.answer.toLowerCase()) {
+                questionAnswered = true;
+                feedbackBox.className = "feedback-box correct";
+                feedbackBox.innerText = `🎯 ${currentDifficulty === 'hard' ? 'PERFECT' : 'PERFEITO'}! +100 PTS\n${q.explanation}`;
+                score += 100;
+                if (lives < 3) lives++;
+            } else {
+                feedbackBox.className = "feedback-box wrong";
+                feedbackBox.innerText = `❌ ${currentDifficulty === 'hard' ? 'WRONG' : 'INCORRETO'}! ${currentDifficulty === 'hard' ? 'Expected' : 'Esperado'}: "${q.answer}"`;
+                lives--;
+                if (lives <= 0) {
+                    setTimeout(triggerRechargeModal, 1000);
+                }
+            }
+            updateHUD();
+        }
+
+        /* MECÂNICA DE RECARGA DE HP (SORTEIA 1 DAS 20 QUESTÕES DE RECONCILIAÇÃO) */
+        function triggerRechargeModal() {
+            document.getElementById('exerciseArea').style.display = 'none';
+            document.getElementById('rechargeArea').classList.add('active');
+
+            const randomIndex = Math.floor(Math.random() * db.recharge.length);
+            const rechargeItem = db.recharge[randomIndex];
+
+            document.getElementById('rechargeText').innerText = `"${rechargeItem.text}"`;
+            document.getElementById('rechargeQuestionText').innerText = rechargeItem.question;
+
+            const container = document.getElementById('rechargeOptionsContainer');
+            container.innerHTML = "";
+
+            const feedback = document.getElementById('rechargeFeedbackBox');
+            feedback.style.display = "none";
+
+            rechargeItem.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = `${String.fromCharCode(65 + idx)}) ${opt}`;
+                btn.onclick = () => {
+                    if (idx === rechargeItem.answer) {
+                        btn.classList.add('btn-correct');
+                        feedback.className = "feedback-box correct";
+                        feedback.innerText = `💚 RESPOSTA CORRETA! Vidas restauradas (HP 100%).\n${rechargeItem.explanation}`;
+                        lives = 3;
+                        updateHUD();
+                        setTimeout(() => {
+                            document.getElementById('rechargeArea').classList.remove('active');
+                            document.getElementById('exerciseArea').style.display = 'flex';
+                            loadQuestion();
+                        }, 2200);
+                    } else {
+                        btn.classList.add('btn-wrong');
+                        btn.disabled = true;
+                        feedback.className = "feedback-box wrong";
+                        feedback.innerText = "❌ Resposta incorreta! Tente outra alternativa.";
+                    }
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        function triggerVictory() {
+            document.getElementById('exerciseArea').style.display = 'none';
+            document.getElementById('victoryArea').classList.add('active');
+            document.getElementById('vicFinalScore').innerText = String(score).padStart(4, '0');
+        }
+
+        function restartQuest() {
+            openQuestModal(activeMode);
+        }
+
+        function navigateQuestion(dir) {
+            const questions = getQuestions();
+            const newIdx = currentQuestionIdx + dir;
+            if (newIdx >= 0 && newIdx <= questions.length) {
+                currentQuestionIdx = newIdx;
+                loadQuestion();
+            }
+        }
+
+        init();
+    </script>
+</body>
+
+</html>
